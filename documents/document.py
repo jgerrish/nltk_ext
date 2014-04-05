@@ -2,7 +2,7 @@
 import copy, itertools, json, operator, random
 import nltk
 from nltk.text import Text
-from nltk import FreqDist
+from nltk_ext.indexes.unigram_index import UnigramIndex
 import pprint
 
 class Document:
@@ -23,9 +23,9 @@ class Document:
     #     self.__dict__.update(data)
 
     def __init__(self, data, word_filters=[]):
-        self._freq_dist = None
         self.nltk_text = None
         self.body_attribute = Document.BodyAttribute
+        self._index = None
         if (type(data) == str) or (type(data) == unicode):
             self.document = { }
             self.document[Document.BodyAttribute] = data
@@ -106,35 +106,32 @@ class Document:
             return self.nltk_text
         return None
 
-    def index(self):
+    def index(self, index_class=UnigramIndex):
         """
         index the document, building a word frequency table and other indexes
         stopwords are currently indexed
         """
-        if self._freq_dist == None:
-            self._freq_dist = FreqDist()
-            for word in self.words():
-                self._freq_dist.inc(word)
-
-    def freq_dist(self):
-        if self._freq_dist == None:
-            self.index()
-        return self._freq_dist
-
-    # return the number of times a term appears in this document
-    def freq(self, term):
-        if not self._freq_dist:
-            self.index()
-        return self._freq_dist[term]
+        self._index = index_class()
+        self._index.index(self)
 
     # returns the term frequency of a term
     def tf(self, term):
-        if not self._freq_dist:
+        if self._index:
+            return self._index.tf(term)
+        else:
             self.index()
-        return float(self._freq_dist[term]) / float(self._freq_dist.N())
+            return self._index.tf(term)
+
+    def freq_dist(self):
+        if self._index:
+            return self._index.freq_dist()
+        else:
+            self.index()
+            return self._index.freq_dist()
 
     def update_text(self, text):
         if self.body_attribute in self.document:
             self.document[self.body_attribute] = text
         self.nltk_text = None
-        self._freq_dist = None
+        if self._index:
+            self._index.reset()

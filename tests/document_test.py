@@ -15,35 +15,6 @@ class DocumentTestCase(unittest.TestCase):
         d2 = Document("This this.")
         self.assertEqual(str(d1), "This this.")
 
-    def test_index(self):
-        self.assertEqual(self.d1._freq_dist, None)
-        self.assertEqual(self.d2._freq_dist, None)
-        self.assertEqual(self.d3._freq_dist, None)
-        self.d1.index()
-        self.d2.index()
-        self.d3.index()
-        self.assertNotEqual(self.d1._freq_dist, None)
-        self.assertNotEqual(self.d2._freq_dist, None)
-        self.assertNotEqual(self.d3._freq_dist, None)
-
-        # periods are considered words by default in NLTK
-        self.assertEqual(len(self.d1._freq_dist), 2)
-        self.assertEqual(self.d1._freq_dist["this"], 2)
-        self.assertEqual(self.d1._freq_dist["."], 1)
-
-        self.assertEqual(len(self.d2._freq_dist), 6)
-        self.assertEqual(self.d2._freq_dist["this"], 1)
-        self.assertEqual(self.d2._freq_dist["is"], 1)
-        self.assertEqual(self.d2._freq_dist["another"], 1)
-        self.assertEqual(self.d2._freq_dist["test"], 1)
-        self.assertEqual(self.d2._freq_dist["document"], 1)
-        self.assertEqual(self.d2._freq_dist["."], 1)
-
-        self.assertEqual(len(self.d3._freq_dist), 3)
-        self.assertEqual(self.d3._freq_dist["two"], 1)
-        self.assertEqual(self.d3._freq_dist["words"], 1)
-        self.assertEqual(self.d3._freq_dist["."], 1)
-
     def test___str__(self):
         self.assertEqual(str(self.d1), "This this.")
         self.assertEqual(str(self.d2), "This is another test document.")

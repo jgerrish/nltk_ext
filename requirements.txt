@@ -1,0 +1,5 @@
+boilerpipe==1.2.0.0
+bunch==1.0.1
+nltk==2.0.4
+pymongo==2.6.3
+redis==2.9.1

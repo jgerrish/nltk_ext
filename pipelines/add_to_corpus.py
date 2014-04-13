@@ -1,6 +1,6 @@
 # add_to_corpus is a pipeline module that adds documents to a corpus
 from nltk_ext.documents.document import Document
-from nltk_ext.corpus import Corpus
+from nltk_ext.corpus.corpus import Corpus
 from nltk_ext.pipelines.pipeline_module import enumModuleType, enumModuleProcessingType, PipelineModule
 
 class AddToCorpus(PipelineModule):

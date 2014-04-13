@@ -1,4 +1,5 @@
 import os, sys
+from nltk_ext.documents.document import Document
 
 class FileReader(object):
     def __init__(self, source):
@@ -23,6 +24,12 @@ class FileReader(object):
         else:
             self.cursor_position += 1
             return { 'id': self.source, 'body': self.data }
+
+    def process(self, data):
+        i = iter(self)
+        doc = Document({"id": self.source, "body": self.data})
+        for doc in [doc]:
+            yield doc
 
     def __iter__(self):
         self.cursor_position = 0

@@ -2,7 +2,7 @@ import pprint
 import unittest
 import math
 from nltk_ext.documents.document import Document
-from nltk_ext.corpus.corpus import Corpus
+from nltk_ext.corpus.corpus import ScikitLearnNotInstalledException, Corpus
 
 class CorpusTestCase(unittest.TestCase):
     def setUp(self):
@@ -66,6 +66,20 @@ class CorpusTestCase(unittest.TestCase):
         neighbors = corpus.neighbors(self.d1, 0)
         n = [doc.doc_id for doc in neighbors]
         self.assertEqual(set(["1", "3"]), set(n))
+
+    def test_to_scikit_learn_dataset(self):
+        corpus = Corpus([self.d1, self.d2, self.d3, self.d4])
+
+        import importlib.util
+        package_name = 'sklearn.utils'
+        spec = importlib.util.find_spec(package_name)
+        ex = False
+        try:
+            dataset = corpus.to_scikit_learn_dataset()
+        except ScikitLearnNotInstalledException as e:
+            ex = True
+        self.assertEqual(ex, spec is None)
+
 
 def suite():
     loader = unittest.TestLoader()

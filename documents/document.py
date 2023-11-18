@@ -26,7 +26,7 @@ class Document:
         self.nltk_text = None
         self.body_attribute = Document.BodyAttribute
         self._index = None
-        if (type(data) == str) or (type(data) == unicode):
+        if (type(data) == str):# or (type(data) == unicode):
             self.document = { }
             self.document[Document.BodyAttribute] = data
         else:
@@ -83,7 +83,15 @@ class Document:
 
     def words(self, use_unicode=True, filtered=True, lowercase=True):
         all_words = []
-        text = unicode(self).encode('ascii', 'ignore')
+        # text = unicode(self).encode('ascii', 'ignore')
+        #text = str(self).encode('ascii', 'ignore')
+        text = str(self)
+        # print(type(self))
+        # if type(self) == 'java.lang.String':
+        # text = self.decode(chardet.detect(self)['encoding'])
+        # else:
+        #    text = str(self)
+
         for sentence in nltk.tokenize.sent_tokenize(text):
             words = nltk.tokenize.word_tokenize(sentence)
             if lowercase:
@@ -95,7 +103,11 @@ class Document:
         return all_words
 
     def to_ngrams(self, n=5):
-        self.ngrams = nltk.util.ngrams(self.words(), n)
+        """
+        This returns an iterator for ngrams.
+        Creating a list from it consumes the generator.
+        """
+        self.ngrams = nltk.ngrams(self.words(), n)
         return self.ngrams
 
     def to_nltk_text(self):

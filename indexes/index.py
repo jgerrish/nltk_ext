@@ -13,7 +13,7 @@ class Index:
         if self._freq_dist == None:
             self._freq_dist = FreqDist()
             for term in self.terms():
-                self._freq_dist.inc(term)
+                self._freq_dist[term] += 1
 
     def reset(self):
         "Reset the index"

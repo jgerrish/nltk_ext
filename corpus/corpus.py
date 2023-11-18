@@ -1,11 +1,23 @@
 # Simple document corpus / collection
+import importlib.util
 import math, operator, pprint
 import nltk.corpus
-from bunch import Bunch
+
+package_name = 'sklearn.utils'
+spec = importlib.util.find_spec(package_name)
+sklearn_installed = False
+if spec is not None:
+    sklearn_installed = True
+    from sklearn.utils import Bunch
 from nltk import FreqDist
 from nltk.text import TextCollection
 from nltk_ext.documents.document import Document
 from operator import itemgetter, attrgetter
+
+class ScikitLearnNotInstalledException(Exception):
+    "An exception that indicates scikit-learn is not installed"
+    pass
+
 
 class Corpus:
     def __init__(self, documents=None):
@@ -70,11 +82,11 @@ class Corpus:
         that should be included in the results
         """
         sorted_dist_vector = self.generate_neighbor_list(document)
-        filtered = filter(lambda((x, y)): y <= max_distance, sorted_dist_vector)
-        return [self.__getitem__(x[0]) for x in filtered]
+        filtered = filter(lambda x: x[1] <= max_distance, sorted_dist_vector)
+        return [self.__getitem__(x[0][0]) for x in filtered]
 
     def _sort_dict_by_value(self, d):
-        return sorted(d.iteritems(), key=operator.itemgetter(1))
+        return sorted(iter(d.items()), key=operator.itemgetter(1))
 
     def _sorted_dict_index(self, pairs):
         return [i for i, j in pairs]
@@ -226,7 +238,7 @@ class Corpus:
             fd = d.freq_dist()
             for word in fd.keys():
                 v[word] = self.tf_idf(doc_id, word)
-        sorted_v = sorted(v.iteritems(), key=operator.itemgetter(1))
+        sorted_v = sorted(iter(v.items()), key=operator.itemgetter(1))
         sorted_v.reverse()
 
         if n != None:
@@ -241,13 +253,17 @@ class Corpus:
         return r
 
     def to_scikit_learn_dataset(self):
+        if not sklearn_installed:
+            raise ScikitLearnNotInstalledException("scikit-learn not installed")
         dataset = {}
         dataset["data"] = []
         dataset["ids"] = []
         #dataset["filenames"]
         for doc_id in self.docs.keys():
             dataset["ids"].append(doc_id)
-            dataset["data"].append(unicode(self.docs[doc_id]))
+            dataset["data"].append(str(self.docs[doc_id]))
+            # dataset["data"].append(unicode(self.docs[doc_id]))
+
         b = Bunch(DESCR=None, ids=dataset["ids"], data=dataset["data"])
         return b
 

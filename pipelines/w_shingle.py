@@ -1,5 +1,5 @@
 # w-shingling generator
-import itertools, sets
+import itertools
 from nltk_ext.documents.document import Document
 from nltk.util import ngrams
 
@@ -21,7 +21,12 @@ class WShingle(object):
             elif type(document) == str:
                 doc = Document(document)
                 ngrams = doc.to_ngrams(self.ngram_size)
-            uniq = sets.ImmutableSet(ngrams)
+            uniq = set(ngrams)
+            # Instead of using the Python hash function, we could
+            # include a language-agnostic hash so hashes don't
+            # possibly change between Python versions.
+            # If your use cases involve long-term storage, this is
+            # probably a good addition.
             hashes = [hash(ng) for ng in uniq]
             if self.attribute:
                 document.set(self.attribute, hashes)

@@ -39,9 +39,10 @@ class DocumentTestCase(unittest.TestCase):
 
     def test_to_ngrams(self):
         ngrams = self.d4.to_ngrams(2)
-        self.assertEqual(ngrams, [("derp", "a"), ("a", "derp"), ("derp", "."),
-                                  (".", "a"), ("a", "derp"), ("derp", "derp"),
-                                  ("derp", ".")])
+        self.assertEqual(list(ngrams),
+                         [("derp", "a"), ("a", "derp"), ("derp", "."),
+                          (".", "a"), ("a", "derp"), ("derp", "derp"),
+                          ("derp", ".")])
 
 def suite():
     loader = unittest.TestLoader()

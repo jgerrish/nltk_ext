@@ -13,28 +13,30 @@ class WShingleTestCase(unittest.TestCase):
         r = WShingle(2, "w_shingles")
         docs = list(r.process(self.docs))
         shingles = list(docs[0].document["w_shingles"])
+        # Could write a custom hashing algorithm so this is
+        # more stable between Python versions
+        ngrams = [("derp", "a"), ("derp", "derp"), ("a", "derp")]
+        hashes = [hash(x) for x in ngrams]
         self.assertEqual(len(shingles), 3)
-        self.assertItemsEqual(shingles, [4511874163119075276,
-                                         586875170268770749,
-                                         1339662791857901318])
+        self.assertEqual(set(shingles), set(hashes))
 
     def test_boilerpipe_extractor_without_attribute(self):
         r = WShingle(2)
         docs = list(r.process(self.docs))
         shingles = list(docs[0])
+        ngrams = [("derp", "a"), ("derp", "derp"), ("a", "derp")]
+        hashes = [hash(x) for x in ngrams]
         self.assertEqual(len(shingles), 3)
-        self.assertItemsEqual(shingles, [4511874163119075276,
-                                         586875170268770749,
-                                         1339662791857901318])
+        self.assertEqual(set(shingles), set(hashes))
 
     def test_boilerpipe_extractor_str(self):
         r = WShingle(2)
         docs = list(r.process([self.d2]))
         shingles = list(docs[0])
+        ngrams = [("a", "derp"), ("derp", "a"), ("derp", "derp")]
+        hashes = [hash(x) for x in ngrams]
         self.assertEqual(len(shingles), 3)
-        self.assertItemsEqual(shingles, [4511874163119075276,
-                                         586875170268770749,
-                                         1339662791857901318])
+        self.assertEqual(set(shingles), set(hashes))
 
 def suite():
     loader = unittest.TestLoader()

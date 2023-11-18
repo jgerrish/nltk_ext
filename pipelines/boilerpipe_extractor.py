@@ -1,6 +1,6 @@
 # HTML to text module for converting HTML documents to text
 import copy
-from boilerpipe.extract import Extractor
+from boilerpy3.extractors import ArticleExtractor
 
 class BoilerpipeExtractor(object):
     def __init__(self, attribute="body", new_attribute="body_text"):
@@ -10,9 +10,8 @@ class BoilerpipeExtractor(object):
     def process_text(self, text):
         if text == "":
             return text
-        extractor = Extractor(extractor='ArticleExtractor',
-                              html=text)
-        new_val = extractor.getText()
+        extractor = ArticleExtractor()
+        new_val = extractor.get_content(text)
         return new_val
 
     def process(self, documents):

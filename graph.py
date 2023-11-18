@@ -1,4 +1,4 @@
-import json, sets
+import json
 
 class Graph:
     def __init__(self, directed=False):
@@ -9,7 +9,7 @@ class Graph:
         if self.directed == False:
             return self.graph.keys()
         else:
-            vertices = sets.Set()
+            vertices = set()
             for v1 in self.graph.keys():
                 vertices.add(v1)
                 for v2 in self.graph[v1]:

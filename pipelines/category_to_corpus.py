@@ -42,7 +42,8 @@ class CategoryToCorpus(PipelineModule):
         else:
             if category in self.corpus:
                 d = self.corpus[category]
-                d.update_text(unicode(d) + " " + unicode(document))
+                d.update_text("{} {}".format(d, document))
+                # d.update_text(unicode(d) + " " + unicode(document))
             else:
                 document.set_doc_id(category)
                 self.corpus.add(document)
@@ -94,6 +95,6 @@ class CategoryToCorpus(PipelineModule):
 
     def top_categories(self, n=10):
         for doc_id in self.categories:
-            print str(doc_id)
+            print(doc_id)
             rt = self.corpus.ranked_terms(doc_id, n)
-            print "  " + str(rt)
+            print("  {}".format(rt))

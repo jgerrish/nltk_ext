@@ -16,6 +16,6 @@ class StdoutWriter(object):
 
     def process(self, source, data=None):
         for s in source:
-            print "data"
-            print str(s)#self.formatter(s)
+            print("data")
+            print(str(s))#self.formatter(s)
             yield self.formatter(s)

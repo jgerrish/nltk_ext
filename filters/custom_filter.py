@@ -1,5 +1,6 @@
 # Filter documents using a custom filter function
-from nltk_ext.pipelines.pipeline_module import enumModuleType, enumModuleProcessingType, PipelineModule
+from nltk_ext.pipelines.pipeline_module import PipelineModule
+
 
 class CustomFilter(PipelineModule):
     """
@@ -8,6 +9,7 @@ class CustomFilter(PipelineModule):
     test.  It should return true if the element should be passed along the
     pipeline, and false if it should be ignored.
     """
+
     def __init__(self, custom_func):
         self.custom_func = custom_func
 

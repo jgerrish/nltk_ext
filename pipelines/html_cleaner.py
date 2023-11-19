@@ -1,6 +1,9 @@
 # HTML Cleaner module for cleaning HTML documents before conversion
 # TODO: Clean up pipeline interface, separate word/document processing
-import copy, pprint, re
+import copy
+import pprint
+import re
+
 
 class HtmlCleaner(object):
     def __init__(self, attribute="body"):

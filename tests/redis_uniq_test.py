@@ -2,10 +2,10 @@ import unittest
 from nltk_ext.documents.document import Document
 from nltk_ext.pipelines.redis_uniq import RedisUniq
 
+
 class RedisUniqTestCase(unittest.TestCase):
     def setUp(self):
-        self.d1 = Document({"id": "1",
-                            "body": "A test of a unique filter pipeline."})
+        self.d1 = Document({"id": "1", "body": "A test of a unique filter pipeline."})
 
     def test_document(self):
         words = []
@@ -23,11 +23,13 @@ class RedisUniqTestCase(unittest.TestCase):
         self.assertEqual(words[2], "of")
         self.assertEqual(words[3], "unique")
 
+
 def suite():
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     suite.addTest(loader.loadTestsFromTestCase(RedisUniqTestCase))
     return suite
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())

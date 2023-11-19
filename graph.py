@@ -1,12 +1,13 @@
 import json
 
+
 class Graph:
     def __init__(self, directed=False):
         self.graph = {}
         self.directed = directed
 
     def vertices(self):
-        if self.directed == False:
+        if not self.directed:
             return self.graph.keys()
         else:
             vertices = set()
@@ -38,7 +39,7 @@ class Graph:
 
         self.graph[src][dest] = val
 
-        if self.directed == False:
+        if not self.directed:
             if dest not in self.graph:
                 self.graph[dest] = {}
             self.graph[dest][src] = val
@@ -54,7 +55,7 @@ class Graph:
         else:
             self.graph[src][dest] += 1
 
-        if self.directed == False:
+        if not self.directed:
             if dest not in self.graph:
                 self.graph[dest] = {}
             if src not in self.graph[dest]:
@@ -73,7 +74,7 @@ class Graph:
         return self.as_json()
 
     def as_json(self):
-        return json.dumps(self.graph, sort_keys=True, indent=4, separators=(',', ': '))
+        return json.dumps(self.graph, sort_keys=True, indent=4, separators=(",", ": "))
 
     def as_edgelist(self):
         s = ""
@@ -81,7 +82,7 @@ class Graph:
             for v2 in self.graph[v1].keys():
                 s += v1 + " " + v2 + " " + str(self.graph[v1][v2]) + "\n"
 
-        if self.directed == True:
+        if self.directed:
             for v2 in self.vertices():
                 for v1 in self.graph[v2].keys():
                     s += v2 + " " + v1 + " " + str(self.graph[v2][v1]) + "\n"

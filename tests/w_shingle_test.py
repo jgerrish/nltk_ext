@@ -2,10 +2,10 @@ import unittest
 from nltk_ext.documents.html_document import HTMLDocument
 from nltk_ext.pipelines.w_shingle import WShingle
 
+
 class WShingleTestCase(unittest.TestCase):
     def setUp(self):
-        self.d1 = HTMLDocument({"id": "1",
-                                "body_text": "Derp a derp\nA derp derp"})
+        self.d1 = HTMLDocument({"id": "1", "body_text": "Derp a derp\nA derp derp"})
         self.d2 = "Derp a derp\nA derp derp"
         self.docs = [self.d1]
 
@@ -38,11 +38,13 @@ class WShingleTestCase(unittest.TestCase):
         self.assertEqual(len(shingles), 3)
         self.assertEqual(set(shingles), set(hashes))
 
+
 def suite():
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     suite.addTest(loader.loadTestsFromTestCase(WShingleTestCase))
     return suite
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())

@@ -1,9 +1,9 @@
 # Simple document class
-import copy, itertools, json, operator, random
+import json
 import nltk
 from nltk.text import Text
 from nltk_ext.indexes.unigram_index import UnigramIndex
-import pprint
+
 
 class Document:
     """
@@ -13,6 +13,7 @@ class Document:
     text: an attribute defined by BodyAttribute that contains the main
           document text
     """
+
     BodyAttribute = "body"
 
     # def __init__(self, **data):
@@ -26,11 +27,11 @@ class Document:
         self.nltk_text = None
         self.body_attribute = Document.BodyAttribute
         self._index = None
-        if (type(data) == str):# or (type(data) == unicode):
-            self.document = { }
+        if type(data) == str:  # or (type(data) == unicode):
+            self.document = {}
             self.document[Document.BodyAttribute] = data
         else:
-            self.__dict__.update((t, i) for (i,t) in enumerate(data))
+            self.__dict__.update((t, i) for (i, t) in enumerate(data))
             keys = data.keys()
             self.__dict__.update(zip(keys, [data[key] for key in keys]))
             self.document = data.copy()
@@ -62,7 +63,9 @@ class Document:
         return k in self.document
 
     def as_json(self):
-        return json.dumps(self.document, sort_keys=True, indent=4, separators=(',', ': '))
+        return json.dumps(
+            self.document, sort_keys=True, indent=4, separators=(",", ": ")
+        )
 
     def set_doc_id(self, doc_id):
         self.doc_id = doc_id
@@ -84,7 +87,7 @@ class Document:
     def words(self, use_unicode=True, filtered=True, lowercase=True):
         all_words = []
         # text = unicode(self).encode('ascii', 'ignore')
-        #text = str(self).encode('ascii', 'ignore')
+        # text = str(self).encode('ascii', 'ignore')
         text = str(self)
         # print(type(self))
         # if type(self) == 'java.lang.String':

@@ -1,5 +1,5 @@
-import os, sys
 from nltk_ext.documents.document import Document
+
 
 class FileReader(object):
     def __init__(self, source):
@@ -13,7 +13,7 @@ class FileReader(object):
         if source:
             self.source = source
         with open(self.source, "r") as f:
-            self.data = f.read().replace('\n', ' ')
+            self.data = f.read().replace("\n", " ")
         return self.data
 
     # get the next document in the source
@@ -23,10 +23,9 @@ class FileReader(object):
             raise StopIteration
         else:
             self.cursor_position += 1
-            return { 'id': self.source, 'body': self.data }
+            return {"id": self.source, "body": self.data}
 
     def process(self, data):
-        i = iter(self)
         doc = Document({"id": self.source, "body": self.data})
         for doc in [doc]:
             yield doc

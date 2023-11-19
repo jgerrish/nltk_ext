@@ -2,6 +2,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from nltk_ext.documents.html_document import HTMLDocument
 
+
 # TODO: investigate if we need to use the MongoDB cursor functionality instead
 # to prevent loading documents into memory
 class MongoDBReader(object):
@@ -21,7 +22,7 @@ class MongoDBReader(object):
             self.cursor_position += 1
             doc = self.found_docs[self.cursor_position - 1]
             h = doc.copy()
-            h['id'] = str(doc['_id'])
+            h["id"] = str(doc["_id"])
             return h
 
     def __iter__(self):
@@ -33,18 +34,17 @@ class MongoDBReader(object):
         return self.collection.find_one({"_id": ObjectId(doc_id)})
 
     def remove(self, doc_id):
-        self.collection.remove({"_id":ObjectId(doc_id)})
+        self.collection.remove({"_id": ObjectId(doc_id)})
 
     def process(self, data):
-        i = iter(self)
         for doc in self.collection.find():
             h = doc.copy()
-            h['id'] = str(doc['_id'])
+            h["id"] = str(doc["_id"])
             yield h
 
     def get_doc(self, doc_id, doc_class=HTMLDocument):
         d = self.get(doc_id)
         h = d.copy()
-        h['id'] = str(d['_id'])
-        del h['_id']
+        h["id"] = str(d["_id"])
+        del h["_id"]
         return doc_class(h)

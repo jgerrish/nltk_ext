@@ -4,6 +4,7 @@
 # For example, using "^.$" would filter out single character words
 import re
 
+
 class RegexpFilter(object):
     def __init__(self, regex):
         if regex:
@@ -11,5 +12,5 @@ class RegexpFilter(object):
 
     def filter(self, elements):
         for elem in elements:
-            if self.regex.match(elem) == None:
+            if self.regex.match(elem) is None:
                 yield elem

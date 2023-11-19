@@ -1,7 +1,8 @@
 from nltk_ext.filters.filter_chain import FilterChain
 
+
 # TODO: Make this class iterable
-class Pipeline():
+class Pipeline:
     def __init__(self, modules=[], filter_chain=None):
         self.modules = modules
         self.filter_chain = filter_chain if filter_chain else FilterChain()
@@ -23,8 +24,8 @@ class Pipeline():
 
     def process_corpus(self, corpus):
         """
-        provide methods on Pipeline in addition to Corpus to process collections
-        of documents.
+        provide methods on Pipeline in addition to Corpus to process
+        collections of documents.
         """
         for doc in corpus:
-            res = self.process(doc)
+            self.process(doc)

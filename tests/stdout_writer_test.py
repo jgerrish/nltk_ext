@@ -1,11 +1,10 @@
 import unittest
 from nltk_ext.documents.document import Document
-from nltk_ext.pipelines.stdout_writer import StdoutWriter
+
 
 class StdoutWriterTestCase(unittest.TestCase):
     def setUp(self):
-        self.d1 = Document({"id": "1",
-                            "body": "A test of a unique filter pipeline."})
+        self.d1 = Document({"id": "1", "body": "A test of a unique filter pipeline."})
 
     def test_document(self):
         words = []
@@ -14,10 +13,11 @@ class StdoutWriterTestCase(unittest.TestCase):
         self.assertEqual(len(words), 8)
         self.assertEqual(words[1], "test")
 
-    #def test_stdout_writer(self):
+    # def test_stdout_writer(self):
     #    r = StdoutWriter()
     #    words = r.process(self.d1.words())
     #    self.assertIsNone(words)
+
 
 def suite():
     loader = unittest.TestLoader()
@@ -25,5 +25,6 @@ def suite():
     suite.addTest(loader.loadTestsFromTestCase(StdoutWriterTestCase))
     return suite
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())

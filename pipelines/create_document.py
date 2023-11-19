@@ -3,6 +3,7 @@
 import copy
 from nltk_ext.documents.html_document import HTMLDocument
 
+
 class CreateDocument(object):
     def __init__(self, document_class=HTMLDocument, attribute="body"):
         self.document_class = document_class

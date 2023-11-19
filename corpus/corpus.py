@@ -1,18 +1,21 @@
 # Simple document corpus / collection
 import importlib.util
-import math, operator, pprint
-import nltk.corpus
+import math
+import operator
+import pprint
 
-package_name = 'sklearn.utils'
+from nltk import FreqDist
+from nltk.text import TextCollection
+from nltk_ext.documents.document import Document
+from operator import itemgetter
+
+package_name = "sklearn.utils"
 spec = importlib.util.find_spec(package_name)
 sklearn_installed = False
 if spec is not None:
     sklearn_installed = True
     from sklearn.utils import Bunch
-from nltk import FreqDist
-from nltk.text import TextCollection
-from nltk_ext.documents.document import Document
-from operator import itemgetter, attrgetter
+
 
 class ScikitLearnNotInstalledException(Exception):
     "An exception that indicates scikit-learn is not installed"
@@ -29,13 +32,15 @@ class Corpus:
         if documents:
             for doc in documents:
                 self.docs[doc.doc_id] = doc
-            self.nltk_text_collection = TextCollection([x.to_nltk_text() for x in self.docs.values()])
+            self.nltk_text_collection = TextCollection(
+                [x.to_nltk_text() for x in self.docs.values()]
+            )
         self.term_index = {}
         self._vocabulary = None
         self.clear_indexes()
         self.pp = pprint.PrettyPrinter(indent=4)
 
-    #def neighbors(self, document, window_size=9)
+    # def neighbors(self, document, window_size=9)
 
     def __len__(self):
         return len(self.docs.keys())
@@ -68,11 +73,11 @@ class Corpus:
 
         index = self.inverse_len_index[document.doc_id]
 
-        l = len(self.sorted_by_len)
+        length = len(self.sorted_by_len)
         r = window_size / 2
         start = max(0, index - r)
-        end = min(l, (index + 1) + r)
-        n = self.sorted_by_len[start:index] + self.sorted_by_len[(index+1):end]
+        end = min(length, (index + 1) + r)
+        n = self.sorted_by_len[start:index] + self.sorted_by_len[(index + 1) : end]
         return [self.__getitem__(x) for x in n]
 
     def neighbors(self, document, max_distance):
@@ -98,7 +103,7 @@ class Corpus:
         not modified.  You need to re-initialize the iterator if you want
         to include the new items.
         """
-        #print "adding " + str(document.doc_id)
+        # print "adding " + str(document.doc_id)
         self.docs[document.doc_id] = document
         self.clear_indexes()
 
@@ -109,6 +114,7 @@ class Corpus:
         self.inverse_len_index = None
         self.inverse_dist_index = None
 
+    # TODO Add tests for this
     def generate_doc_lens(self):
         self.doc_lens = {}
         for document in self.docs.values():
@@ -121,29 +127,32 @@ class Corpus:
         return abs(self.doc_lens[doc1] - self.doc_lens[doc2])
 
     def generate_dist_vector(self, document, dist_func=char_dist):
-        if (isinstance(document, Document)):
+        if isinstance(document, Document):
             doc_id = document.doc_id
         elif type(document) == str:
             doc_id = document
-        if self.doc_lens == None:
+        if self.doc_lens is None:
             self.generate_doc_lens()
         v = {}
         for target in self.docs.keys():
             v[target] = dist_func(self, doc_id, target)
         return v
 
+    # TODO Add tests for this
     def generate_dist_matrix(self):
-        if self.doc_lens == None:
+        if self.doc_lens is None:
             self.generate_doc_lens()
-        if self.dist_matrix == None:
+        if self.dist_matrix is None:
             self.dist_matrix = {}
         for doc1 in self.docs.keys():
             self.dist_matrix[doc1] = generate_dist_vector(doc1)
 
     def _generate_neighbor_list(self):
-        if self.doc_lens == None:
+        if self.doc_lens is None:
             self.generate_doc_lens()
-        self.sorted_by_len = self._sorted_dict_index(self._sort_dict_by_value(self.doc_lens))
+        self.sorted_by_len = self._sorted_dict_index(
+            self._sort_dict_by_value(self.doc_lens)
+        )
         self.inverse_len_index = {}
         for idx, val in enumerate(self.sorted_by_len):
             self.inverse_len_index[val] = idx
@@ -169,7 +178,9 @@ class Corpus:
         if self.nltk_text_collection:
             return self.nltk_text_collection
         else:
-            self.nltk_text_collection = TextCollection([x.to_nltk_text() for x in self.docs.values()])
+            self.nltk_text_collection = TextCollection(
+                [x.to_nltk_text() for x in self.docs.values()]
+            )
             return self.nltk_text_collection
         return None
 
@@ -186,7 +197,7 @@ class Corpus:
     def df(self, term):
         if not self.term_index:
             self.index()
-        #self.pp.pprint(self.term_index)
+        # self.pp.pprint(self.term_index)
         if term in self.term_index:
             return len(self.term_index[term])
         else:
@@ -207,7 +218,7 @@ class Corpus:
         return self.tf(doc_id, term) * float(self.idf(term))
 
     def vocabulary(self):
-        if self._vocabulary == None:
+        if self._vocabulary is None:
             self._vocabulary = FreqDist()
             for doc in self.docs.values():
                 self._vocabulary.update(dict(doc.freq_dist()))
@@ -241,7 +252,7 @@ class Corpus:
         sorted_v = sorted(iter(v.items()), key=operator.itemgetter(1))
         sorted_v.reverse()
 
-        if n != None:
+        if n is not None:
             return sorted_v[0:n]
         else:
             return sorted_v
@@ -258,7 +269,7 @@ class Corpus:
         dataset = {}
         dataset["data"] = []
         dataset["ids"] = []
-        #dataset["filenames"]
+        # dataset["filenames"]
         for doc_id in self.docs.keys():
             dataset["ids"].append(doc_id)
             dataset["data"].append(str(self.docs[doc_id]))
@@ -278,6 +289,7 @@ class Corpus:
         # sort the list of doc_id, attribute tuples by the attribute
         return [x[0] for x in sorted(d, key=itemgetter(1))]
 
+    # TODO Add tests for this
     def process_pipeline(self, pipeline):
         for doc in self.docs.values():
-            res = pipeline.process(doc)
+            pipeline.process(doc)

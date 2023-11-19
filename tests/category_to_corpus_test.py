@@ -1,15 +1,14 @@
 import unittest
 from nltk_ext.documents.document import Document
-from nltk_ext.corpus.corpus import Corpus
 from nltk_ext.pipelines.generator_pipeline import GeneratorPipeline
-from nltk_ext.filters.stopword import StopwordFilter
-from nltk_ext.pipelines.uniq import Uniq
 from nltk_ext.pipelines.category_to_corpus import CategoryToCorpus
+
 
 class CategoryToCorpusTestCase(unittest.TestCase):
     """
     Test a simple pipeline with several pipeline modules
     """
+
     def setUp(self):
         self.d1 = Document({"id": "1", "body": "A stopword test."})
         self.d1.set("categories", ["stopwords"])
@@ -57,7 +56,7 @@ class CategoryToCorpusTestCase(unittest.TestCase):
         self.assertEqual(word_list[2], "test")
         self.assertEqual(word_list[3], ".")
 
-    def test_category_to_corpus_combined(self):
+    def test_category_to_corpus_combined_two(self):
         """
         Test combined mode, which concatenates documents in the same category
         into a single document
@@ -99,11 +98,12 @@ class CategoryToCorpusTestCase(unittest.TestCase):
 
     def test_category_to_corpus_separated(self):
         """
-        Test separated mode, which puts documents in the same category into different
-        corpora
+        Test separated mode, which puts documents in the same category
+        into different corpora.
         """
-        category_to_corpus = CategoryToCorpus(None, None, "categories", None,
-                                              "separated")
+        category_to_corpus = CategoryToCorpus(
+            None, None, "categories", None, "separated"
+        )
         pipeline = GeneratorPipeline([category_to_corpus])
         docs = pipeline.process(self.docs)
         # TODO: add a sink module or something similar to thread all docs/words
@@ -116,11 +116,13 @@ class CategoryToCorpusTestCase(unittest.TestCase):
         self.assertEqual(len(corpora["stopwords"]), 2)
         self.assertEqual(len(corpora["parsing"]), 1)
 
+
 def suite():
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     suite.addTest(loader.loadTestsFromTestCase(CategoryToCorpusTestCase))
     return suite
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())

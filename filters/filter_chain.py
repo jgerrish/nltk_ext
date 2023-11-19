@@ -1,4 +1,4 @@
-class FilterChain():
+class FilterChain:
     def __init__(self, filters=[]):
         self.filters = filters
 

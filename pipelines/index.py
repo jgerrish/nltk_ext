@@ -1,12 +1,17 @@
 # The Index module builds an index of terms to documents
-from nltk_ext.graph import Graph
-from nltk_ext.pipelines.pipeline_module import enumModuleType, enumModuleProcessingType, PipelineModule
+from nltk_ext.pipelines.pipeline_module import (
+    enumModuleType,
+    enumModuleProcessingType,
+    PipelineModule,
+)
+
 
 class Index(PipelineModule):
     def __init__(self):
         self.module_type = enumModuleType(enumModuleType.Document)
-        self.module_processing_type = \
-            enumModuleProcessingType(enumModuleProcessingType.PostProcess)
+        self.module_processing_type = enumModuleProcessingType(
+            enumModuleProcessingType.PostProcess
+        )
         self.index = {}
 
     def process(self, source, data, attribute="body_text"):
@@ -22,11 +27,13 @@ class Index(PipelineModule):
     def post_process(self):
         return self.index
 
+
 class IndexAttributes(PipelineModule):
     def __init__(self):
         self.module_type = enumModuleType(enumModuleType.Document)
-        self.module_processing_type = \
-            enumModuleProcessingType(enumModuleProcessingType.PostProcess)
+        self.module_processing_type = enumModuleProcessingType(
+            enumModuleProcessingType.PostProcess
+        )
         self.index = {}
 
     def process(self, source, data, attribute="categories"):

@@ -1,9 +1,11 @@
 import pprint
 
+
 class StdoutWriter(object):
     """
     Pipeline module to print out items
     """
+
     def __init__(self, formatter=None):
         if formatter:
             self.formatter = formatter
@@ -17,5 +19,5 @@ class StdoutWriter(object):
     def process(self, source, data=None):
         for s in source:
             print("data")
-            print(str(s))#self.formatter(s)
+            print(str(s))  # self.formatter(s)
             yield self.formatter(s)

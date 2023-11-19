@@ -6,15 +6,20 @@
 # attribute and one of the blacklist parameters are required arguments
 import re
 
+
 class DocumentBlacklist(object):
-    def __init__(self, attribute=None,
-                 blacklist=None, blacklist_fn="blacklist.txt"):
+    def __init__(
+        self,
+        attribute=None,
+        blacklist=None,
+        blacklist_fn="blacklist.txt",
+    ):
         bl = []
-        if (blacklist_fn != None) and (blacklist == None):
+        if (blacklist_fn is not None) and (blacklist is None):
             with open(blacklist_fn, "r") as f:
-                bl = f.read().split('\n')
+                bl = f.read().split("\n")
                 # convert list to a set
-        elif blacklist != None:
+        elif blacklist is not None:
             bl = blacklist
         self.blacklist = set(bl)
         self.attribute = attribute
@@ -35,8 +40,7 @@ class DocumentBlacklist(object):
             match = False
             if self.attribute in document:
                 for bl in self.regex_blacklist:
-                    #print "checking " + document[self.attribute] + " against " + str(bl)
-                    if bl.match(document[self.attribute]) != None:
+                    if bl.match(document[self.attribute]) is not None:
                         match = True
             if not match:
                 yield document

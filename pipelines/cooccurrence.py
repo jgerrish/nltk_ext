@@ -1,15 +1,21 @@
 # The co-occurrence pipeline module builds a co-occurrence graph
 # of values, indicating which ones occur together
 from nltk_ext.graph import Graph
-from nltk_ext.pipelines.pipeline_module import enumModuleType, enumModuleProcessingType, PipelineModule
+from nltk_ext.pipelines.pipeline_module import (
+    enumModuleType,
+    enumModuleProcessingType,
+    PipelineModule,
+)
+
 
 class CooccurrencePipeline(PipelineModule):
     def __init__(self, output=None):
         self.output = output
         self.cooccur_graph = Graph()
         self.module_type = enumModuleType(enumModuleType.Document)
-        self.module_processing_type = \
-            enumModuleProcessingType(enumModuleProcessingType.PostProcess)
+        self.module_processing_type = enumModuleProcessingType(
+            enumModuleProcessingType.PostProcess
+        )
 
     def process(self, source, data, attribute="categories"):
         if attribute in data.document:
@@ -24,7 +30,7 @@ class CooccurrencePipeline(PipelineModule):
         return self.cooccur_graph
 
     def write(self):
-        if self.output != None:
-            f = open(self.output, 'w')
+        if self.output is not None:
+            f = open(self.output, "w")
             f.write(self.cooccur_graph.as_edgelist())
             f.close()

@@ -1,13 +1,12 @@
 import unittest
 from nltk_ext.documents.document import Document
 from nltk_ext.pipelines.identity import Identity
-from nltk_ext.pipelines.stdout_writer import StdoutWriter
 from nltk_ext.pipelines.tee import Tee
+
 
 class TeeTestCase(unittest.TestCase):
     def setUp(self):
-        self.d1 = Document({"id": "1",
-                            "body": "A test of a unique filter pipeline."})
+        self.d1 = Document({"id": "1", "body": "A test of a unique filter pipeline."})
 
     def test_document(self):
         words = []
@@ -31,11 +30,13 @@ class TeeTestCase(unittest.TestCase):
         words2 = list(t.alternate())
         self.document_test(words2)
 
+
 def suite():
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     suite.addTest(loader.loadTestsFromTestCase(TeeTestCase))
     return suite
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())

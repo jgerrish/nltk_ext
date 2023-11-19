@@ -1,10 +1,12 @@
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
 
-class enumModuleType():
+
+class enumModuleType:
     """
     Based on enum example found on stackoverflow:
     http://stackoverflow.com/questions/702834/whats-the-common-practice-for-enums-in-python
     """
+
     Document = 0
     Sentence = 1
     Word = 2
@@ -14,50 +16,56 @@ class enumModuleType():
 
     def __str__(self):
         if self.value == enumModuleType.Document:
-            return 'Document'
+            return "Document"
         if self.value == enumModuleType.Sentence:
-            return 'Sentence'
+            return "Sentence"
         if self.value == enumModuleType.Word:
-            return 'Word'
+            return "Word"
 
-    def __eq__(self,y):
-        return self.value==y.value
+    def __eq__(self, y):
+        return self.value == y.value
 
 
-class enumModuleProcessingType():
+class enumModuleProcessingType:
     """
     This enumeration type indicates at what point in the processing pipeline
     the module has data ready.
-    Right now there are two options: after each iteration of process(), or
-    at the end of processing via post_process()
+
+    Right now there are two options: after each iteration of
+    process(), or at the end of processing via post_process()
+
     Based on enum example found on stackoverflow:
     http://stackoverflow.com/questions/702834/whats-the-common-practice-for-enums-in-python
-    """
+
+    """  # :noqa E501
+
     Process = 0
     PostProcess = 1
 
     def __init__(self, Type):
-            self.value = Type
+        self.value = Type
 
     def __str__(self):
         if self.value == enumModuleProcessingType.Document:
-            return 'Document'
+            return "Document"
         if self.value == enumModuleProcessingType.Sentence:
-            return 'Sentence'
+            return "Sentence"
         if self.value == enumModuleProcessingType.Word:
-            return 'Word'
+            return "Word"
 
-    def __eq__(self,y):
-       return self.value == y.value
+    def __eq__(self, y):
+        return self.value == y.value
 
 
-class PipelineModule():
+class PipelineModule:
     """
     Abstract base class for pipeline modules
     Concrete classes must implement a process method
-    The process method is called for each document, sentence or word depending on
-    the module type.
+
+    The process method is called for each document, sentence or word
+    depending on the module type.
     """
+
     def __init__(self):
         self.before_process_callbacks = []
         self.after_process_callbacks = []

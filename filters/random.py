@@ -1,6 +1,6 @@
 # A random filter that drops a random number of documents based on
 # simple uniform probability distribution
-import random
+
 
 class RandomFilter(object):
     # Initialize the RandomFilter with a drop probability,
@@ -21,7 +21,7 @@ class RandomFilter(object):
     def process(self, docs):
         return self.filter(docs)
 
-    #def filter(self, elem):
+    # def filter(self, elem):
     #    if self.randgen:
     #        rnd = self.randgen()
     #    else:

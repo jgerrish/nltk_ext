@@ -1,6 +1,7 @@
 from nltk_ext.parsers.parser import Parser
 from nltk_ext.documents.facebook import FacebookDocument
 
+
 class FacebookParser(Parser):
     def __init__(self):
         pass

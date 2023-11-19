@@ -1,8 +1,9 @@
 # similarity graph generator
-import itertools, sets
+# TODO Add a test for the below
+from nltk_ext.corpus.corpus import Corpus
 from nltk_ext.documents.document import Document
 from nltk_ext.graph import Graph
-from nltk.util import ngrams
+
 
 # Document pipeline module to generate a similarity graph for a document
 class SimilarityGraph(object):
@@ -14,9 +15,9 @@ class SimilarityGraph(object):
 
     def process(self, documents):
         for document in documents:
-            if (isinstance(document, Document)):
+            if isinstance(document, Document):
                 self.corpus.add(document)
                 doc1_id = document.doc_id
-                neighbors = self.corpus.neighbors(doc1_id, self.distance)
+                self.neighbors = self.corpus.neighbors(doc1_id, self.distance)
 
         yield document

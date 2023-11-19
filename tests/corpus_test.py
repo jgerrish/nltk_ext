@@ -1,8 +1,8 @@
-import pprint
 import unittest
 import math
 from nltk_ext.documents.document import Document
 from nltk_ext.corpus.corpus import ScikitLearnNotInstalledException, Corpus
+
 
 class CorpusTestCase(unittest.TestCase):
     def setUp(self):
@@ -31,10 +31,18 @@ class CorpusTestCase(unittest.TestCase):
         self.assertEqual(self.corpus.tf("3", "."), 1.0 / 3.0)
 
     def test_tf_idf(self):
-        self.assertEqual(self.corpus.tf_idf("1", "this"), (2.0 / 3.0) * math.log(3.0 / 2.0))
-        self.assertEqual(self.corpus.tf_idf("2", "this"), (1.0 / 6.0) * math.log(3.0 / 2.0))
-        self.assertEqual(self.corpus.tf_idf("2", "is"), (1.0 / 6.0) * math.log(3.0 / 1.0))
-        self.assertEqual(self.corpus.tf_idf("3", "."), (1.0 / 3.0) * math.log(3.0 / 3.0))
+        self.assertEqual(
+            self.corpus.tf_idf("1", "this"), (2.0 / 3.0) * math.log(3.0 / 2.0)
+        )
+        self.assertEqual(
+            self.corpus.tf_idf("2", "this"), (1.0 / 6.0) * math.log(3.0 / 2.0)
+        )
+        self.assertEqual(
+            self.corpus.tf_idf("2", "is"), (1.0 / 6.0) * math.log(3.0 / 1.0)
+        )
+        self.assertEqual(
+            self.corpus.tf_idf("3", "."), (1.0 / 3.0) * math.log(3.0 / 3.0)
+        )
 
     def test_vocabulary(self):
         v = self.corpus.vocabulary()
@@ -44,16 +52,18 @@ class CorpusTestCase(unittest.TestCase):
 
     def test_generate_doc_lens(self):
         self.corpus.generate_doc_lens()
-        result = { "1": 10, "2": 30, "3": 10 }
+        result = {"1": 10, "2": 30, "3": 10}
         self.assertEqual(self.corpus.doc_lens, result)
 
     def test_generate_neighbor_list(self):
         corpus = Corpus([self.d1, self.d2, self.d3, self.d4])
-        l = corpus.generate_neighbor_list(self.d1)
-        self.assertTrue(((l[0] == ("1", 0)) and (l[1] == ("3", 0))) or
-                        ((l[0] == ("3", 0)) and (l[1] == ("1", 0))))
-        self.assertEqual(l[2], ("4", 2))
-        self.assertEqual(l[3], ("2", 20))
+        length = corpus.generate_neighbor_list(self.d1)
+        self.assertTrue(
+            ((length[0] == ("1", 0)) and (length[1] == ("3", 0)))
+            or ((length[0] == ("3", 0)) and (length[1] == ("1", 0)))
+        )
+        self.assertEqual(length[2], ("4", 2))
+        self.assertEqual(length[3], ("2", 20))
 
     def test_neighbors(self):
         corpus = Corpus([self.d1, self.d2, self.d3, self.d4])
@@ -71,12 +81,15 @@ class CorpusTestCase(unittest.TestCase):
         corpus = Corpus([self.d1, self.d2, self.d3, self.d4])
 
         import importlib.util
-        package_name = 'sklearn.utils'
+
+        package_name = "sklearn.utils"
         spec = importlib.util.find_spec(package_name)
         ex = False
         try:
             dataset = corpus.to_scikit_learn_dataset()
-        except ScikitLearnNotInstalledException as e:
+            # TODO Test dataset
+            self.assertTrue(dataset is not None)
+        except ScikitLearnNotInstalledException:
             ex = True
         self.assertEqual(ex, spec is None)
 
@@ -87,5 +100,6 @@ def suite():
     suite.addTest(loader.loadTestsFromTestCase(CorpusTestCase))
     return suite
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())

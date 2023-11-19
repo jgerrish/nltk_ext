@@ -1,6 +1,6 @@
 import unittest
-from nltk_ext.documents.document import Document
 from nltk_ext.pipelines.create_document import CreateDocument
+
 
 class CreateDocumentTestCase(unittest.TestCase):
     def setUp(self):
@@ -21,11 +21,13 @@ class CreateDocumentTestCase(unittest.TestCase):
         doc = docs[0]
         self.assertEqual(doc.document["body"], "a second document test")
 
+
 def suite():
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     suite.addTest(loader.loadTestsFromTestCase(CreateDocumentTestCase))
     return suite
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())

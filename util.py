@@ -4,7 +4,7 @@ class Util(object):
         """Static method for Jaccard distance"""
         union = len(s1.union(s2))
         inter = len(s1.intersection(s2))
-        if (union == 0):
+        if union == 0:
             return 0.0
         else:
-            return (float(inter) / float(union))
+            return float(inter) / float(union)

@@ -1,6 +1,7 @@
 import unittest
 from nltk_ext.documents.document import Document
 
+
 class DocumentTestCase(unittest.TestCase):
     def setUp(self):
         self.d1 = Document({"id": "1", "body": "This this."})
@@ -12,6 +13,7 @@ class DocumentTestCase(unittest.TestCase):
         d1 = Document({"id": "1", "body": "This this."})
         self.assertEqual(d1.doc_id, "1")
         self.assertEqual(str(d1), "This this.")
+        # TODO Fix this test
         d2 = Document("This this.")
         self.assertEqual(str(d1), "This this.")
 
@@ -39,10 +41,19 @@ class DocumentTestCase(unittest.TestCase):
 
     def test_to_ngrams(self):
         ngrams = self.d4.to_ngrams(2)
-        self.assertEqual(list(ngrams),
-                         [("derp", "a"), ("a", "derp"), ("derp", "."),
-                          (".", "a"), ("a", "derp"), ("derp", "derp"),
-                          ("derp", ".")])
+        self.assertEqual(
+            list(ngrams),
+            [
+                ("derp", "a"),
+                ("a", "derp"),
+                ("derp", "."),
+                (".", "a"),
+                ("a", "derp"),
+                ("derp", "derp"),
+                ("derp", "."),
+            ],
+        )
+
 
 def suite():
     loader = unittest.TestLoader()
@@ -50,5 +61,6 @@ def suite():
     suite.addTest(loader.loadTestsFromTestCase(DocumentTestCase))
     return suite
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())

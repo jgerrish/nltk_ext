@@ -1,16 +1,18 @@
 from nltk import FreqDist
 
+
 class Index:
     """
     The Index class stores an index for a document.
     """
+
     def __init__(self):
         self._freq_dist = None
         self._document = None
 
     def index(self, document):
         self._document = document
-        if self._freq_dist == None:
+        if self._freq_dist is None:
             self._freq_dist = FreqDist()
             for term in self.terms():
                 self._freq_dist[term] += 1
@@ -20,7 +22,7 @@ class Index:
         self._freq_dist = None
 
     def freq_dist(self):
-        if self._freq_dist == None:
+        if self._freq_dist is None:
             self.index()
         return self._freq_dist
 

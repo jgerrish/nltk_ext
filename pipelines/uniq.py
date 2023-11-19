@@ -1,7 +1,7 @@
 # Module to return uniq elements given a list of elements
 # Stores every item seen in the stream, for large collections,
 # use the RedisUniq Redis-backed uniq module
-import itertools
+
 
 class Uniq(object):
     def __init__(self):

@@ -1,15 +1,24 @@
 # category_to_corpus converts a set of documents tagged with categories
 # to a set of corpora, with each corpus corresponding to a single tag/category
+import json
 import pprint
-from nltk_ext.graph import Graph
-from nltk_ext.documents.document import Document
 from nltk_ext.corpus.corpus import Corpus
-from nltk_ext.pipelines.pipeline_module import enumModuleType, enumModuleProcessingType, PipelineModule
+from nltk_ext.pipelines.pipeline_module import (
+    enumModuleType,
+    enumModuleProcessingType,
+    PipelineModule,
+)
+
 
 class CategoryToCorpus(PipelineModule):
-    def __init__(self, output=None, corpus=None,
-                 attribute="categories",
-                 categories=None, mode="combined"):
+    def __init__(
+        self,
+        output=None,
+        corpus=None,
+        attribute="categories",
+        categories=None,
+        mode="combined",
+    ):
         """
         Create a CategoryToCorpus module, which loads a corpus with tagged
         documents.
@@ -21,13 +30,14 @@ class CategoryToCorpus(PipelineModule):
         self.output = output
         self.corpora = {}
         # combined mode has a single corpus
-        if corpus == None:
+        if corpus is None:
             self.corpus = Corpus()
         else:
             self.corpus = corpus
         self.module_type = enumModuleType(enumModuleType.Document)
-        self.module_processing_type = \
-            enumModuleProcessingType(enumModuleProcessingType.PostProcess)
+        self.module_processing_type = enumModuleProcessingType(
+            enumModuleProcessingType.PostProcess
+        )
         self.attribute = attribute
         self.categories = categories
         self.mode = mode
@@ -61,7 +71,7 @@ class CategoryToCorpus(PipelineModule):
             if self.attribute in doc.document:
                 d = doc.document[self.attribute]
                 if type(d) is list:
-                    if self.categories == None:
+                    if self.categories is None:
                         for v in d:
                             self.add_document(v, doc)
                     else:
@@ -73,7 +83,9 @@ class CategoryToCorpus(PipelineModule):
     def post_process(self):
         """
         method that gets run after all data has been processed
-        TODO: look into optimizing this, seems inefficient, written in derp-mode
+
+        TODO: look into optimizing this, seems inefficient, written in
+        derp-mode
         """
         if self.mode != "combined":
             return self.corpora
@@ -85,11 +97,11 @@ class CategoryToCorpus(PipelineModule):
             c = self.corpora
         else:
             c = self.corpus
-        json.dumps(c, sort_keys=True, indent=4, separators=(',', ': '))
+        json.dumps(c, sort_keys=True, indent=4, separators=(",", ": "))
 
     def write(self):
-        if self.output != None:
-            f = open(self.output, 'w')
+        if self.output is not None:
+            f = open(self.output, "w")
             f.write(self.as_json())
             f.close()
 

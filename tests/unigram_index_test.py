@@ -1,6 +1,7 @@
 import unittest
 from nltk_ext.documents.document import Document
 
+
 class UnigramIndexTestCase(unittest.TestCase):
     def setUp(self):
         self.d1 = Document({"id": "1", "body": "This this."})
@@ -47,5 +48,6 @@ def suite():
     suite.addTest(loader.loadTestsFromTestCase(UnigramIndexTestCase))
     return suite
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())

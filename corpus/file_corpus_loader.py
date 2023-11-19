@@ -1,7 +1,7 @@
-import json
-import pprint
+import glob
 from nltk_ext.corpus import Corpus
 from nltk_ext.document import Document
+from nltk_ext.readers.mongodb import MongoDBReader
 from progressbar import Percentage, ProgressBar, Bar, ETA
 
 
@@ -11,7 +11,7 @@ class FileCorpusLoader:
         self.max_cnt = max_cnt
 
     def process(self, data, fields=None):
-        if fields != None:
+        if fields is not None:
             d = {}
             for field in fields:
                 if field in data:
@@ -23,28 +23,41 @@ class FileCorpusLoader:
 
         return self.documents
 
-    def load(self, dbname="spout_test", collection="good_documents", fields=None,
-             progress_bar=True):
+    def load(
+        self,
+        dbname="spout_test",
+        collection="good_documents",
+        fields=None,
+        progress_bar=True,
+    ):
         self.reader = MongoDBReader(dbname, collection)
 
         num_docs = self.reader.collection.count()
         count = 0
         if progress_bar:
-            progress_bar_tmpl = ['Loading: ', Percentage(), ' ',
-                                 Bar(marker='#', left='[', right=']'), ' ', ETA()]
-            pbar = ProgressBar(widgets=progress_bar_tmpl,
-                               maxval=min(num_docs, self.max_cnt + 1))
+            progress_bar_tmpl = [
+                "Loading: ",
+                Percentage(),
+                " ",
+                Bar(marker="#", left="[", right="]"),
+                " ",
+                ETA(),
+            ]
+            pbar = ProgressBar(
+                widgets=progress_bar_tmpl, maxval=min(num_docs, self.max_cnt + 1)
+            )
             pbar.start()
-        i = 0
 
         files = glob.glob(d + "/*.txt")
         for f in files:
-            with open(f, 'r') as content_file:
+            with open(f, "r") as content_file:
                 content = content_file.read()
-                d = Document({
-                    'id': f,
-                    'body_text': content,
-                })
+                d = Document(
+                    {
+                        "id": f,
+                        "body_text": content,
+                    }
+                )
                 documents.add(d)
 
         if progress_bar:

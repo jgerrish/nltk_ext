@@ -2,10 +2,15 @@ import unittest
 from nltk_ext.documents.document import Document
 from nltk_ext.pipelines.html_cleaner import HtmlCleaner
 
+
 class HtmlCleanerTestCase(unittest.TestCase):
     def setUp(self):
-        self.d1 = Document({"id": "1",
-                            "body": "A test of a html cleaner pipeline.<br/> Another sentence."})
+        self.d1 = Document(
+            {
+                "id": "1",
+                "body": "A test of a html cleaner pipeline.<br/> Another sentence.",  # noqa: E501
+            }
+        )
         self.docs = [self.d1]
 
     def test_document(self):
@@ -33,11 +38,13 @@ class HtmlCleanerTestCase(unittest.TestCase):
         self.assertEqual(words[34], "\n")
         self.assertEqual(words[35], " ")
 
+
 def suite():
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     suite.addTest(loader.loadTestsFromTestCase(HtmlCleanerTestCase))
     return suite
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.TextTestRunner(verbosity=2).run(suite())

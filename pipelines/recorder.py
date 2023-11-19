@@ -5,6 +5,7 @@ class Recorder(object):
     Useful for testing pipeline processing and pulling out intermediate
     data.
     """
+
     def __init__(self, data=[]):
         self.data = data
 

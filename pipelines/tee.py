@@ -1,5 +1,6 @@
 import itertools
 
+
 class Tee(object):
     """
     The tee module lets you split a pipeline into two separate paths
@@ -8,6 +9,7 @@ class Tee(object):
     The iterators should be consumed roughly at the same rate or
     more memory will be used.
     """
+
     def __init__(self, module):
         self.module = module
 

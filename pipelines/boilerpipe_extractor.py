@@ -2,6 +2,7 @@
 import copy
 from boilerpy3.extractors import ArticleExtractor
 
+
 class BoilerpipeExtractor(object):
     def __init__(self, attribute="body", new_attribute="body_text"):
         self.attribute = attribute

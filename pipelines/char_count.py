@@ -1,5 +1,5 @@
 # Count number of characters in a document
-import copy
+
 
 class CharCount(object):
     def __init__(self, new_attribute="char_count"):

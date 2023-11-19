@@ -1,5 +1,6 @@
 from nltk_ext.indexes.index import Index
 
+
 class UnigramIndex(Index):
     """
     Unigram model index class.  Terms are the unigrams in the document.

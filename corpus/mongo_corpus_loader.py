@@ -1,4 +1,3 @@
-import json
 from nltk_ext.corpus import Corpus
 from nltk_ext.documents.document import Document
 from progressbar import Percentage, ProgressBar, Bar, ETA

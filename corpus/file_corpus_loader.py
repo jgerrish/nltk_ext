@@ -1,7 +1,6 @@
 import glob
-from nltk_ext.corpus import Corpus
-from nltk_ext.document import Document
-from nltk_ext.readers.mongodb import MongoDBReader
+from nltk_ext.corpus.corpus import Corpus
+from nltk_ext.documents.document import Document
 from progressbar import Percentage, ProgressBar, Bar, ETA
 
 
@@ -25,15 +24,15 @@ class FileCorpusLoader:
 
     def load(
         self,
-        dbname="spout_test",
-        collection="good_documents",
+        directory,
         fields=None,
         progress_bar=True,
     ):
-        self.reader = MongoDBReader(dbname, collection)
+        files = glob.glob(directory + "/*.txt")
 
-        num_docs = self.reader.collection.count()
-        count = 0
+        num_docs = len(files)
+        # num_docs = self.reader.collection.count()
+        # count = 0
         if progress_bar:
             progress_bar_tmpl = [
                 "Loading: ",
@@ -48,8 +47,8 @@ class FileCorpusLoader:
             )
             pbar.start()
 
-        files = glob.glob(d + "/*.txt")
         for f in files:
+            # self.reader = FileReader(f)
             with open(f, "r") as content_file:
                 content = content_file.read()
                 d = Document(
@@ -58,7 +57,7 @@ class FileCorpusLoader:
                         "body_text": content,
                     }
                 )
-                documents.add(d)
+                self.documents.add(d)
 
         if progress_bar:
             pbar.finish()

@@ -14,9 +14,6 @@ def suite():
 
 def load_tests(loader, standard_tests, pattern):
     # top level directory cached on loader instance
-    import unittest
-    import doctest
-
     this_dir = os.path.dirname(__file__)
     package_tests = loader.discover(start_dir=this_dir)
     standard_tests.addTests(package_tests)
@@ -24,6 +21,8 @@ def load_tests(loader, standard_tests, pattern):
 
 
 if __name__ == "__main__":
+    import unittest
+
     loader = unittest.defaultTestLoader
     standard_tests = unittest.TestSuite()
     unittest.TextTestRunner(verbosity=2).run(loader, standard_tests, "*_test.py")

@@ -77,7 +77,10 @@ class Corpus:
         r = window_size / 2
         start = max(0, index - r)
         end = min(length, (index + 1) + r)
-        n = self.sorted_by_len[start:index] + self.sorted_by_len[(index + 1) : end]
+        n = (
+            self.sorted_by_len[start:index]
+            + self.sorted_by_len[(index + 1) : end]  # noqa: E203
+        )
         return [self.__getitem__(x) for x in n]
 
     def neighbors(self, document, max_distance):
@@ -118,7 +121,6 @@ class Corpus:
     def generate_doc_lens(self):
         self.doc_lens = {}
         for document in self.docs.values():
-            doc_id = document.doc_id
             shn = len(document)
             self.doc_lens[document.doc_id] = shn
 
@@ -127,6 +129,7 @@ class Corpus:
         return abs(self.doc_lens[doc1] - self.doc_lens[doc2])
 
     def generate_dist_vector(self, document, dist_func=char_dist):
+        doc_id = None
         if isinstance(document, Document):
             doc_id = document.doc_id
         elif type(document) == str:
@@ -144,8 +147,8 @@ class Corpus:
             self.generate_doc_lens()
         if self.dist_matrix is None:
             self.dist_matrix = {}
-        for doc1 in self.docs.keys():
-            self.dist_matrix[doc1] = generate_dist_vector(doc1)
+        # for doc1 in self.docs.keys():
+        #     self.dist_matrix[doc1] = generate_dist_vector(doc1)
 
     def _generate_neighbor_list(self):
         if self.doc_lens is None:

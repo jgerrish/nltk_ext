@@ -15,7 +15,7 @@ class DocumentTestCase(unittest.TestCase):
         self.assertEqual(str(d1), "This this.")
         # TODO Fix this test
         d2 = Document("This this.")
-        self.assertEqual(str(d1), "This this.")
+        self.assertEqual(str(d2), "This this.")
 
     def test___str__(self):
         self.assertEqual(str(self.d1), "This this.")

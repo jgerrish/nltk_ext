@@ -8,6 +8,7 @@ class FileReader(object):
             self.source = source
             self.read()
 
+    # TODO: Make this use the context manager API
     def read(self, source=None):
         # override constructor source if specified
         if source:

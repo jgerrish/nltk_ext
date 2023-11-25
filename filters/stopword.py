@@ -5,10 +5,10 @@
 # filter that takes a single element and returns True if the element
 # should be included and False if it should be filtered out
 from nltk.corpus import stopwords
-from nltk_ext.pipelines.pipeline_module import PipelineModule
+from nltk_ext.filters.filter import Filter
 
 
-class StopwordFilter(PipelineModule):
+class StopwordFilter(Filter):
     def __init__(self, lang="english"):
         self.stopwords = stopwords.words(lang)
 

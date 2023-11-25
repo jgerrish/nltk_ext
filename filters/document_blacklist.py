@@ -5,9 +5,10 @@
 # document is rejected
 # attribute and one of the blacklist parameters are required arguments
 import re
+from nltk_ext.filters.filter import Filter
 
 
-class DocumentBlacklist(object):
+class DocumentBlacklist(Filter):
     def __init__(
         self,
         attribute=None,

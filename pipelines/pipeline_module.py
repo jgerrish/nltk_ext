@@ -1,60 +1,32 @@
 from abc import abstractmethod
+from enum import Enum
+from typing import Any, Callable, Iterator, List, Optional, TYPE_CHECKING, Union
+
+if TYPE_CHECKING:
+    from nltk_ext.documents.document import Document
 
 
-class enumModuleType:
+class enumModuleType(Enum):
     """
-    Based on enum example found on stackoverflow:
-    http://stackoverflow.com/questions/702834/whats-the-common-practice-for-enums-in-python
+    This enumeration specifies the pipeline module type.
     """
 
     Document = 0
     Sentence = 1
     Word = 2
 
-    def __init__(self, Type):
-        self.value = Type
 
-    def __str__(self):
-        if self.value == enumModuleType.Document:
-            return "Document"
-        if self.value == enumModuleType.Sentence:
-            return "Sentence"
-        if self.value == enumModuleType.Word:
-            return "Word"
-
-    def __eq__(self, y):
-        return self.value == y.value
-
-
-class enumModuleProcessingType:
+class enumModuleProcessingType(Enum):
     """
-    This enumeration type indicates at what point in the processing pipeline
-    the module has data ready.
+    This enumeration type indicates at what point in the processing
+    pipeline the module has data ready.
 
     Right now there are two options: after each iteration of
     process(), or at the end of processing via post_process()
-
-    Based on enum example found on stackoverflow:
-    http://stackoverflow.com/questions/702834/whats-the-common-practice-for-enums-in-python
-
-    """  # :noqa E501
+    """
 
     Process = 0
     PostProcess = 1
-
-    def __init__(self, Type):
-        self.value = Type
-
-    def __str__(self):
-        if self.value == enumModuleProcessingType.Document:
-            return "Document"
-        if self.value == enumModuleProcessingType.Sentence:
-            return "Sentence"
-        if self.value == enumModuleProcessingType.Word:
-            return "Word"
-
-    def __eq__(self, y):
-        return self.value == y.value
 
 
 class PipelineModule:
@@ -66,28 +38,47 @@ class PipelineModule:
     depending on the module type.
     """
 
-    def __init__(self):
-        self.before_process_callbacks = []
-        self.after_process_callbacks = []
+    def __init__(self) -> None:
+        self.before_process_callbacks: List[
+            Callable[[Union[List[str], List["Document"]], List[str]], Any]
+        ] = []
+        self.after_process_callbacks: List[
+            Callable[[Union[List[str], List["Document"]], List[str]], Any]
+        ] = []
 
     @abstractmethod
-    def process(self, data, attributes=None):
+    def process(
+        self,
+        elements: Union[List[str], List["Document"]],
+        attributes: Optional[List[str]] = None,
+    ) -> Iterator[Union[str, "Document"]]:
         for cb in self.before_process_callbacks:
-            cb(data, attributes)
+            cb(elements, attributes)
 
-        res = self._process(data, attributes)
+        # res = self._process(elements, attributes)
+        res = ""
 
         for cb in self.after_process_callbacks:
-            cb(data, attributes)
+            cb(elements, attributes)
 
-        return res
+        yield res
 
-    def add_before_process_callback(self, cb):
+    def add_before_process_callback(
+        self,
+        cb: Callable[[Union[List[str], List["Document"]], List[str]], Any],
+    ) -> None:
         self.before_process_callbacks.append(cb)
 
-    def add_after_process_callback(self, cb):
+    def add_after_process_callback(
+        self,
+        cb: Callable[[Union[List[str], List["Document"]], List[str]], Any],
+    ) -> None:
         self.after_process_callbacks.append(cb)
 
-    def process_all(self, data, attributes=None):
+    def process_all(
+        self,
+        data: Union[List[str], List["Document"]],
+        attributes: Optional[List[str]],
+    ) -> None:
         for d in self.process(data, attributes):
             continue

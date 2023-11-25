@@ -8,10 +8,8 @@ from nltk_ext.pipelines.pipeline_module import (
 
 class Index(PipelineModule):
     def __init__(self):
-        self.module_type = enumModuleType(enumModuleType.Document)
-        self.module_processing_type = enumModuleProcessingType(
-            enumModuleProcessingType.PostProcess
-        )
+        self.module_type = enumModuleType.Document
+        self.module_processing_type = enumModuleProcessingType.PostProcess
         self.index = {}
 
     def process(self, source, data, attribute="body_text"):

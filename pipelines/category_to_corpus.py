@@ -34,10 +34,8 @@ class CategoryToCorpus(PipelineModule):
             self.corpus = Corpus()
         else:
             self.corpus = corpus
-        self.module_type = enumModuleType(enumModuleType.Document)
-        self.module_processing_type = enumModuleProcessingType(
-            enumModuleProcessingType.PostProcess
-        )
+        self.module_type = enumModuleType.Document
+        self.module_processing_type = enumModuleProcessingType.PostProcess
         self.attribute = attribute
         self.categories = categories
         self.mode = mode

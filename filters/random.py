@@ -1,8 +1,9 @@
 # A random filter that drops a random number of documents based on
 # simple uniform probability distribution
+from nltk_ext.filters.filter import Filter
 
 
-class RandomFilter(object):
+class RandomFilter(Filter):
     # Initialize the RandomFilter with a drop probability,
     # probability is the drop probability
     def __init__(self, probability=0.8, randgen=None):

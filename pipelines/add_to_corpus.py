@@ -12,10 +12,8 @@ class AddToCorpus(PipelineModule):
     def __init__(self, output=None, corpus=None):
         self.output = output
         self.corpus = Corpus() if (corpus is None) else corpus
-        self.module_type = enumModuleType(enumModuleType.Document)
-        self.module_processing_type = enumModuleProcessingType(
-            enumModuleProcessingType.PostProcess
-        )
+        self.module_type = enumModuleType.Document
+        self.module_processing_type = enumModuleProcessingType.PostProcess
 
     def process(self, data):
         for document in data:

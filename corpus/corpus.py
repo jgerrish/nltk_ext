@@ -3,11 +3,17 @@ import importlib.util
 import math
 import operator
 import pprint
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union, TYPE_CHECKING
+from typing_extensions import Self
+
+if TYPE_CHECKING:
+    from nltk_ext.pipelines.pipeline_module import PipelineModule
 
 from nltk import FreqDist
 from nltk.text import TextCollection
 from nltk_ext.documents.document import Document
 from operator import itemgetter
+
 
 package_name = "sklearn.utils"
 spec = importlib.util.find_spec(package_name)
@@ -23,7 +29,7 @@ class ScikitLearnNotInstalledException(Exception):
 
 
 class Corpus:
-    def __init__(self, documents=None):
+    def __init__(self, documents: List[Document] = None) -> None:
         """
         Corpus constructor
         documents is a list of documents
@@ -35,55 +41,35 @@ class Corpus:
             self.nltk_text_collection = TextCollection(
                 [x.to_nltk_text() for x in self.docs.values()]
             )
-        self.term_index = {}
+        self.term_index: Dict[str, Set[str]] = {}
         self._vocabulary = None
         self.clear_indexes()
         self.pp = pprint.PrettyPrinter(indent=4)
 
     # def neighbors(self, document, window_size=9)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.docs.keys())
 
-    def __contains__(self, a):
+    def __contains__(self, a: Document) -> bool:
         return a in self.docs
 
-    def __getitem__(self, x):
+    def __getitem__(self, x: str) -> Document:
         """Return the document with Document ID x"""
         return self.docs[x]
 
-    def categories(self):
+    def categories(self) -> List[str]:
         """
         Returns list of categories in this corpus
         For combined corpora, categories are equivalent to document ids
         """
-        return self.docs.keys()
+        return list(self.docs.keys())
 
-    def _old_neighbors(self, document, window_size=9):
-        """
-        neighbors based on moving window
-        window_size is the diameter from the index element
-        that should be included in the results
-        """
-        if not self.sorted_by_len:
-            self.generate_neighbor_list()
-
-        if document.doc_id not in self.inverse_len_index:
-            return []
-
-        index = self.inverse_len_index[document.doc_id]
-
-        length = len(self.sorted_by_len)
-        r = window_size / 2
-        start = max(0, index - r)
-        end = min(length, (index + 1) + r)
-        n = (
-            self.sorted_by_len[start:index]
-            + self.sorted_by_len[(index + 1) : end]  # noqa: E203
-        )
-        return [self.__getitem__(x) for x in n]
-
-    def neighbors(self, document, max_distance):
+    def neighbors(
+        self,
+        document: Document,
+        max_distance: float,
+    ) -> list[Document]:
         """
         neighbors based on moving window
         distance is the maximum distance from the index element
@@ -93,13 +79,13 @@ class Corpus:
         filtered = filter(lambda x: x[1] <= max_distance, sorted_dist_vector)
         return [self.__getitem__(x[0][0]) for x in filtered]
 
-    def _sort_dict_by_value(self, d):
+    def _sort_dict_by_value(self, d: Dict[Any, Any]) -> List[Tuple[Any, Any]]:
         return sorted(iter(d.items()), key=operator.itemgetter(1))
 
-    def _sorted_dict_index(self, pairs):
+    def _sorted_dict_index(self, pairs: List[Tuple[Any, Any]]) -> List[Any]:
         return [i for i, j in pairs]
 
-    def add(self, document):
+    def add(self, document: Document) -> None:
         """
         Add a document to this collection
         If there is any current iterator using this collection, it is
@@ -110,25 +96,31 @@ class Corpus:
         self.docs[document.doc_id] = document
         self.clear_indexes()
 
-    def clear_indexes(self):
-        self.doc_lens = None
-        self.dist_matrix = None
-        self.sorted_by_len = None
-        self.inverse_len_index = None
+    def clear_indexes(self) -> None:
+        self.doc_lens: Optional[Dict[str, int]] = None
+        self.dist_matrix: Optional[Dict[Tuple[str, str], float]] = None
+        self.sorted_by_len: Optional[List[str]] = None
+        self.inverse_len_index: Optional[Dict[str, int]] = None
         self.inverse_dist_index = None
 
     # TODO Add tests for this
-    def generate_doc_lens(self):
+    def generate_doc_lens(self) -> None:
         self.doc_lens = {}
         for document in self.docs.values():
             shn = len(document)
             self.doc_lens[document.doc_id] = shn
 
-    def char_dist(self, doc1, doc2):
+    def char_dist(self, doc1: str, doc2: str) -> int:
         "distance function by difference between document lengths"
+        if self.doc_lens is None:
+            self.generate_doc_lens()
         return abs(self.doc_lens[doc1] - self.doc_lens[doc2])
 
-    def generate_dist_vector(self, document, dist_func=char_dist):
+    def generate_dist_vector(
+        self,
+        document: Document,
+        dist_func: Callable[["Corpus", str, str], float] = char_dist,
+    ) -> dict[str, float]:
         doc_id = None
         if isinstance(document, Document):
             doc_id = document.doc_id
@@ -142,7 +134,7 @@ class Corpus:
         return v
 
     # TODO Add tests for this
-    def generate_dist_matrix(self):
+    def generate_dist_matrix(self) -> None:
         if self.doc_lens is None:
             self.generate_doc_lens()
         if self.dist_matrix is None:
@@ -150,7 +142,7 @@ class Corpus:
         # for doc1 in self.docs.keys():
         #     self.dist_matrix[doc1] = generate_dist_vector(doc1)
 
-    def _generate_neighbor_list(self):
+    def _generate_neighbor_list(self) -> None:
         if self.doc_lens is None:
             self.generate_doc_lens()
         self.sorted_by_len = self._sorted_dict_index(
@@ -160,11 +152,11 @@ class Corpus:
         for idx, val in enumerate(self.sorted_by_len):
             self.inverse_len_index[val] = idx
 
-    def generate_neighbor_list(self, document):
+    def generate_neighbor_list(self, document: Document) -> List[Tuple[str, float]]:
         dist_vector = self.generate_dist_vector(document)
         return self._sort_dict_by_value(dist_vector)
 
-    def next(self):
+    def next(self) -> Document:
         if self.cursor_position >= len(self.found_docs):
             raise StopIteration
         else:
@@ -172,12 +164,12 @@ class Corpus:
             doc = self.docs[self.found_docs[self.cursor_position - 1]]
             return doc
 
-    def __iter__(self):
+    def __iter__(self) -> Self:
         self.cursor_position = 0
-        self.found_docs = self.docs.keys()
+        self.found_docs: List[str] = list(self.docs.keys())
         return self
 
-    def to_nltk_text_collection(self):
+    def to_nltk_text_collection(self) -> Union[None, "Corpus"]:
         if self.nltk_text_collection:
             return self.nltk_text_collection
         else:
@@ -188,7 +180,7 @@ class Corpus:
         return None
 
     # wtf nltk
-    def index(self):
+    def index(self) -> None:
         for k in self.docs.keys():
             for word in self.docs[k].words():
                 if word in self.term_index:
@@ -197,7 +189,7 @@ class Corpus:
                     self.term_index[word] = set()
                     self.term_index[word].add(k)
 
-    def df(self, term):
+    def df(self, term: str) -> float:
         if not self.term_index:
             self.index()
         # self.pp.pprint(self.term_index)
@@ -206,7 +198,7 @@ class Corpus:
         else:
             return 0
 
-    def idf(self, term):
+    def idf(self, term: str) -> float:
         df = self.df(term)
         if df == 0.0:
             return 0.0
@@ -214,20 +206,21 @@ class Corpus:
             return math.log(float(len(self)) / float(self.df(term)))
 
     # Use non-augmented tf for now, can experiment later
-    def tf(self, doc_id, term):
+    def tf(self, doc_id: str, term: str) -> float:
         return self.docs[doc_id].tf(term)
 
-    def tf_idf(self, doc_id, term):
+    def tf_idf(self, doc_id: str, term: str) -> float:
         return self.tf(doc_id, term) * float(self.idf(term))
 
-    def vocabulary(self):
+    def vocabulary(self) -> FreqDist:
         if self._vocabulary is None:
             self._vocabulary = FreqDist()
             for doc in self.docs.values():
-                self._vocabulary.update(dict(doc.freq_dist()))
+                if self._vocabulary is not None:
+                    self._vocabulary.update(dict(doc.freq_dist()))
         return self._vocabulary
 
-    def tf_idf_vector(self, doc_id):
+    def tf_idf_vector(self, doc_id: str) -> list[float]:
         """return the TF-IDF term vector for a document
         the length of the vector is equal to the vocabulary size, not the
         number of terms in the document"""
@@ -240,7 +233,9 @@ class Corpus:
                     v[idx] = self.tf_idf(doc_id, word)
         return v
 
-    def ranked_terms(self, doc_id, n=None):
+    def ranked_terms(
+        self, doc_id: str, n: Union[None, int] = None
+    ) -> List[Tuple[str, float]]:
         """
         returns a list of the top terms by TF-IDF in a document
         if n is none, return all terms.  Otherwise return the top n
@@ -260,16 +255,16 @@ class Corpus:
         else:
             return sorted_v
 
-    def top_terms(self, n=5):
-        r = []
+    def top_terms(self, n: int = 5) -> List[List[Tuple[str, float]]]:
+        r: List[List[Tuple[str, float]]] = []
         for document in self.docs.values():
             r.append(self.ranked_terms(document.doc_id, n))
         return r
 
-    def to_scikit_learn_dataset(self):
+    def to_scikit_learn_dataset(self) -> Bunch:
         if not sklearn_installed:
             raise ScikitLearnNotInstalledException("scikit-learn not installed")
-        dataset = {}
+        dataset: Dict[str, List[str]] = {}
         dataset["data"] = []
         dataset["ids"] = []
         # dataset["filenames"]
@@ -281,7 +276,7 @@ class Corpus:
         b = Bunch(DESCR=None, ids=dataset["ids"], data=dataset["data"])
         return b
 
-    def keys_sorted_by_attribute(self, attribute="created_time"):
+    def keys_sorted_by_attribute(self, attribute: str = "created_time") -> list[str]:
         """
         Return the list of document ids sorted by a document attribute
         """
@@ -293,6 +288,6 @@ class Corpus:
         return [x[0] for x in sorted(d, key=itemgetter(1))]
 
     # TODO Add tests for this
-    def process_pipeline(self, pipeline):
+    def process_pipeline(self, pipeline: "PipelineModule") -> None:
         for doc in self.docs.values():
-            pipeline.process(doc)
+            pipeline.process([doc])

@@ -3,7 +3,10 @@
 # The Filter interface expects Filter classes to provide a method
 # filter that takes a single element and returns True if the element
 # should be included and False if it should be filtered out
-class BlacklistFilter(object):
+from nltk_ext.filters.filter import Filter
+
+
+class BlacklistFilter(Filter):
     def __init__(self, blacklist=None, blacklist_fn="blacklist.txt"):
         bl = []
         if (blacklist_fn is not None) and (blacklist is None):

@@ -3,9 +3,10 @@
 # Filter out words based on a given regular expression
 # For example, using "^.$" would filter out single character words
 import re
+from nltk_ext.filters.filter import Filter
 
 
-class RegexpFilter(object):
+class RegexpFilter(Filter):
     def __init__(self, regex):
         if regex:
             self.regex = re.compile(regex)

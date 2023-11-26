@@ -41,11 +41,11 @@ class Document:
         if type(data) == str:  # or (type(data) == unicode):
             self.document = {}
             self.document[Document.BodyAttribute] = data
-        else:
+        elif type(data) == dict:
             self.__dict__.update((t, i) for (i, t) in enumerate(data))
-            keys: List[str] = list(data.keys())  # type: ignore[union-attr]
-            self.__dict__.update(zip(keys, [data[key] for key in keys]))  # type: ignore[index]
-            self.document = data.copy()  # type: ignore[union-attr]
+            keys: List[str] = list(data.keys())
+            self.__dict__.update(zip(keys, [data[key] for key in keys]))
+            self.document = data.copy()
         if "id" in self.document:
             self.set_doc_id(self.document["id"])
         self.word_filters = word_filters

@@ -7,7 +7,7 @@
 # The Filter interface expects Filter classes to provide a method
 # filter that takes a single element and returns True if the element
 # should be included and False if it should be filtered out
-from typing import Any, Iterator
+from typing import Any, List, Iterator
 from nltk_ext.pipelines.pipeline_module import PipelineModule
 
 
@@ -15,7 +15,7 @@ class Filter(PipelineModule):
     def __init__(self) -> None:
         pass
 
-    def filter(self, elements: Any) -> Iterator[Any]:
+    def filter(self, elements: List[Any]) -> Iterator[Any]:
         for elem in elements:
             yield elem
 

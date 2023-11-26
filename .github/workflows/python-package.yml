@@ -41,4 +41,4 @@ jobs:
         pytest
     - name: Run mypy for static type checking
       run: |
-        mypy --config-file mypi.ini indexes/index.py
+        mypy --config-file mypi.ini pipelines/*.py indexes/index.py

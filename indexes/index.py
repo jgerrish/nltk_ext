@@ -23,7 +23,7 @@ class Index:
                 # TODO Test this and verify
                 for term in self._document.words():
                     # for term in self.terms():
-                    self._freq_dist[term] += 1  # type: ignore[attr-defined, index]
+                    self._freq_dist[term] += 1
 
     def reset(self) -> None:
         "Reset the index"
@@ -38,9 +38,9 @@ class Index:
     def freq(self, term: str) -> int:
         if not self._freq_dist:
             self.index()
-        return self._freq_dist[term]  # type: ignore[index]
+        return self._freq_dist[term]
 
     def tf(self, term: str) -> float:
         if not self._freq_dist:
             self.index()
-        return float(self._freq_dist[term]) / float(self._freq_dist.N())  # type: ignore[attr-defined, index]
+        return float(self._freq_dist[term]) / float(self._freq_dist.N())

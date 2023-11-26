@@ -31,6 +31,18 @@ class CharCountTestCase(unittest.TestCase):
         docs = list(r.process([self.d4]))
         self.assertEqual(docs[0], 23)
 
+    def test_char_count_empty_document(self):
+        d1 = Document({"id": "1", "body": ""})
+        r = CharCount()
+        docs = list(r.process([d1]))
+        self.assertEqual(docs[0].document["char_count"], 0)
+
+    def test_char_count_empty_string(self):
+        s1 = ""
+        r = CharCount()
+        lengths = list(r.process([s1]))
+        self.assertEqual(lengths[0], 0)
+
 
 def suite():
     loader = unittest.TestLoader()

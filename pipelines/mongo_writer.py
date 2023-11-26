@@ -1,6 +1,8 @@
 # MongoDB Writer module
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from typing import Any, Iterator, List, Optional
+
 from nltk_ext.pipelines.pipeline_module import PipelineModule
 
 
@@ -15,18 +17,22 @@ class MongoWriter(PipelineModule):
 
     def __init__(
         self,
-        db="spout_test",
-        collection="documents",
-        operation="insert",
-        keys=[],
-    ):
+        db: str = "spout_test",
+        collection: str = "documents",
+        operation: str = "insert",
+        keys: List[str] = [],
+    ) -> None:
         self.mongodb_client = MongoClient()
         self.db = self.mongodb_client[db]
         self.collection = self.db[collection]
         self.operation = operation
         self.keys = keys
 
-    def process(self, documents, keys=None):
+    def process(
+        self,
+        documents: List[Any],
+        keys: Optional[List[str]] = None,
+    ) -> Iterator[Any]:
         if (keys is None) and (self.keys is not None):
             keys = self.keys
         for d in documents:

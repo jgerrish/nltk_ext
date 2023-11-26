@@ -4,22 +4,36 @@ import copy
 import pprint
 import re
 
+from nltk_ext.documents.document import Document
+from nltk_ext.pipelines.pipeline_module import (
+    PipelineModule,
+    ProcessElementsType,
+    ProcessAttributesType,
+    ProcessReturnType,
+)
 
-class HtmlCleaner(object):
-    def __init__(self, attribute="body"):
+
+class HtmlCleaner(PipelineModule):
+    def __init__(self, attribute: str = "body") -> None:
         self.attribute = attribute
         self.regexp = re.compile(r"<[bB][rR]\s*\/?\s*>")
         self.pp = pprint.PrettyPrinter(indent=4)
 
-    def process(self, documents):
-        for document in documents:
+    def process(
+        self,
+        elements: ProcessElementsType,
+        attributes: ProcessAttributesType = None,
+    ) -> ProcessReturnType:
+        for document in elements:
             if type(document) == str:
-                d = document
-                if d != "":
-                    d = self.regexp.sub("\n", d)
+                s = document
+                if s != "":
+                    s = self.regexp.sub("\n", s)
+                yield s
             else:
-                d = copy.copy(document)
-                if self.attribute in d:
+                if isinstance(document, Document):
+                    d = copy.copy(document)
+                if isinstance(d, Document) and (self.attribute in d):
                     new_val = self.regexp.sub("\n", d[self.attribute])
                     d.set(self.attribute, new_val)
-            yield d
+                yield d

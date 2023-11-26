@@ -2,23 +2,34 @@
 # to a set of corpora, with each corpus corresponding to a single tag/category
 import json
 import pprint
+from typing import Dict, Iterator, List, Optional, Union
+
 from nltk_ext.corpus.corpus import Corpus
+from nltk_ext.documents.document import Document
 from nltk_ext.pipelines.pipeline_module import (
     enumModuleType,
     enumModuleProcessingType,
     PipelineModule,
 )
 
+# TODO Should use a Corpus in corpora instead of a list of documents
+# same applies elsewhere
+CorporaType = Dict[str, List[Document]]
+
+# TODO In addition, this shouldn't be a union, should use a different
+# type.
+CombinedCorpusType = Union[Corpus, CorporaType]
+
 
 class CategoryToCorpus(PipelineModule):
     def __init__(
         self,
-        output=None,
-        corpus=None,
-        attribute="categories",
-        categories=None,
-        mode="combined",
-    ):
+        output: str = None,
+        corpus: Corpus = None,
+        attribute: str = "categories",
+        categories: List[str] = None,
+        mode: str = "combined",
+    ) -> None:
         """
         Create a CategoryToCorpus module, which loads a corpus with tagged
         documents.
@@ -28,7 +39,7 @@ class CategoryToCorpus(PipelineModule):
         Otherwise each document is loaded separately.
         """
         self.output = output
-        self.corpora = {}
+        self.corpora: CorporaType = {}
         # combined mode has a single corpus
         if corpus is None:
             self.corpus = Corpus()
@@ -41,7 +52,7 @@ class CategoryToCorpus(PipelineModule):
         self.mode = mode
         self.pp = pprint.PrettyPrinter(indent=4)
 
-    def add_document(self, category, document):
+    def add_document(self, category: str, document: Document) -> None:
         if self.mode != "combined":
             if category in self.corpora:
                 self.corpora[category].append(document)
@@ -56,7 +67,11 @@ class CategoryToCorpus(PipelineModule):
                 document.set_doc_id(category)
                 self.corpus.add(document)
 
-    def process(self, data):
+    def process(
+        self,
+        data: Union[List[str], List[Document]],
+        attributes: Optional[List[str]] = None,
+    ) -> Iterator[Union[str, Document]]:
         """
         Process the documents.  The code looks at the attribute
         attribute, which should be a list or dictionary,
@@ -66,19 +81,34 @@ class CategoryToCorpus(PipelineModule):
         documents with that category.
         """
         for doc in data:
-            if self.attribute in doc.document:
+            if type(doc) == str:
+                return
+            if isinstance(doc, Document) and (self.attribute in doc.document):
                 d = doc.document[self.attribute]
-                if type(d) is list:
-                    if self.categories is None:
-                        for v in d:
-                            self.add_document(v, doc)
-                    else:
-                        for category in self.categories:
-                            if category in d:
-                                self.add_document(category, doc)
+                # TODO: Double check by adding a test that the
+                # behavior is correct now
+                if (type(d) is not list) and (type(d) is not dict):
+                    return
+                if self.categories is None:
+                    for v in d:
+                        self.add_category_document(v, doc)
+                else:
+                    for category in self.categories:
+                        if category in d:
+                            self.add_category_document(category, doc)
             yield doc
 
-    def post_process(self):
+    def add_category_document(
+        self,
+        category: str,
+        doc: Union[str, Document],
+    ) -> None:
+        if type(doc) == str:
+            self.add_document(category, Document(doc))
+        elif isinstance(doc, Document):
+            self.add_document(category, doc)
+
+    def post_process(self) -> CombinedCorpusType:
         """
         method that gets run after all data has been processed
 
@@ -90,20 +120,22 @@ class CategoryToCorpus(PipelineModule):
         else:
             return self.corpus
 
-    def as_json(self):
+    def as_json(self) -> str:
+        # TODO: Refactor this to have a common "root" type
+        c: Optional[CombinedCorpusType] = None
         if self.mode != "combined":
             c = self.corpora
         else:
             c = self.corpus
-        json.dumps(c, sort_keys=True, indent=4, separators=(",", ": "))
+        return json.dumps(c, sort_keys=True, indent=4, separators=(",", ": "))
 
-    def write(self):
+    def write(self) -> None:
         if self.output is not None:
             f = open(self.output, "w")
             f.write(self.as_json())
             f.close()
 
-    def top_categories(self, n=10):
+    def top_categories(self, n: int = 10) -> None:
         for doc_id in self.categories:
             print(doc_id)
             rt = self.corpus.ranked_terms(doc_id, n)

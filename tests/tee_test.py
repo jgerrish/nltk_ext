@@ -25,6 +25,7 @@ class TeeTestCase(unittest.TestCase):
     def test_tee(self):
         identity = Identity()
         t = Tee(identity)
+        self.assertEqual(len(self.d1.words()), 8)
         words = list(t.process(self.d1.words()))
         self.document_test(words)
         words2 = list(t.alternate())

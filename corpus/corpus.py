@@ -51,7 +51,7 @@ class Corpus:
     def __len__(self) -> int:
         return len(self.docs.keys())
 
-    def __contains__(self, a: Document) -> bool:
+    def __contains__(self, a: str) -> bool:
         return a in self.docs
 
     def __getitem__(self, x: str) -> Document:
@@ -168,6 +168,14 @@ class Corpus:
         self.cursor_position = 0
         self.found_docs: List[str] = list(self.docs.keys())
         return self
+
+    def __next__(self) -> Document:
+        if self.cursor_position >= len(self.found_docs):
+            raise StopIteration
+        else:
+            doc = self.found_docs[self.cursor_position]
+            self.cursor_position += 1
+            return self.docs[doc]
 
     def to_nltk_text_collection(self) -> Union[None, "Corpus"]:
         if self.nltk_text_collection:

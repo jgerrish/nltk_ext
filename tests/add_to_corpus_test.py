@@ -13,7 +13,7 @@ class AddToCorpusTestCase(unittest.TestCase):
     def test_process(self):
         add_to_corpus_module = AddToCorpus()
         data = [self.d1, self.d2, self.d3, self.d4]
-        add_to_corpus_module.process(data)
+        add_to_corpus_module.consume_process(data)
         self.assertEqual(len(add_to_corpus_module.corpus), 4)
 
 

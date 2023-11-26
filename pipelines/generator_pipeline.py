@@ -1,4 +1,9 @@
+from typing import Any, List, Optional
+
+from nltk_ext.corpus.corpus import Corpus
+from nltk_ext.filters.filter import Filter
 from nltk_ext.filters.filter_chain import FilterChain
+from nltk_ext.pipelines.pipeline_module import PipelineModule
 
 
 class GeneratorPipeline:
@@ -6,17 +11,21 @@ class GeneratorPipeline:
     New interface to pipeline processing system that doesn't rely on documents
     """
 
-    def __init__(self, modules=[], filter_chain=None):
+    def __init__(
+        self,
+        modules: List[PipelineModule] = [],
+        filter_chain: Optional[FilterChain] = None,
+    ) -> None:
         self.modules = modules
         self.filter_chain = filter_chain if filter_chain else FilterChain()
 
-    def add_filter(self, f):
+    def add_filter(self, f: Filter) -> None:
         self.filter_chain.add(f)
 
-    def add_module(self, m):
+    def add_module(self, m: PipelineModule) -> None:
         self.modules.append(m)
 
-    def process(self, data):
+    def process(self, data: Any) -> Optional[Any]:
         if self.filter_chain.check(data):
             res = data
             for p in self.modules:
@@ -25,7 +34,7 @@ class GeneratorPipeline:
         else:
             return None
 
-    def process_corpus(self, corpus):
+    def process_corpus(self, corpus: Corpus) -> None:
         """
         provide methods on Pipeline in addition to Corpus to process
         collections of documents.

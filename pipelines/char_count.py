@@ -1,8 +1,11 @@
 # Count number of characters in a document
-from typing import Iterator, List, Optional, Union
-
 from nltk_ext.documents.document import Document
-from nltk_ext.pipelines.pipeline_module import PipelineModule
+from nltk_ext.pipelines.pipeline_module import (
+    PipelineModule,
+    ProcessElementsType,
+    ProcessAttributesType,
+    ProcessReturnType,
+)
 
 
 class CharCount(PipelineModule):
@@ -14,10 +17,10 @@ class CharCount(PipelineModule):
 
     def process(
         self,
-        documents: Union[List[str], List[Document]],
-        attributes: Optional[List[str]] = None,
-    ) -> Iterator[Union[int, Document]]:
-        for document in documents:
+        elements: ProcessElementsType,
+        attributes: ProcessAttributesType = None,
+    ) -> ProcessReturnType:
+        for document in elements:
             if type(document) == str:
                 yield self.process_text(document)
             elif isinstance(document, Document):

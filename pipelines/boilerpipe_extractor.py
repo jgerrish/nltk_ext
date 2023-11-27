@@ -1,12 +1,17 @@
 # HTML to text module for converting HTML documents to text
 import copy
 from boilerpy3.extractors import ArticleExtractor
-from typing import Iterator, List, Union
 
 from nltk_ext.documents.document import Document
+from nltk_ext.pipelines.pipeline_module import (
+    PipelineModule,
+    ProcessElementsType,
+    ProcessAttributesType,
+    ProcessReturnType,
+)
 
 
-class BoilerpipeExtractor:
+class BoilerpipeExtractor(PipelineModule):
     def __init__(
         self, attribute: str = "body", new_attribute: str = "body_text"
     ) -> None:
@@ -22,9 +27,10 @@ class BoilerpipeExtractor:
 
     def process(
         self,
-        documents: List[Union[Document, str]],
-    ) -> Iterator[Union[str, Document]]:
-        for document in documents:
+        elements: ProcessElementsType,
+        attributes: ProcessAttributesType = None,
+    ) -> ProcessReturnType:
+        for document in elements:
             if type(document) == str:
                 s = document
                 yield self.process_text(s)

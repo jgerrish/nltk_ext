@@ -1,7 +1,14 @@
-from typing import Any, Iterator, List, Optional
+from typing import Any, List
+
+from nltk_ext.pipelines.pipeline_module import (
+    PipelineModule,
+    ProcessElementsType,
+    ProcessAttributesType,
+    ProcessReturnType,
+)
 
 
-class Recorder(object):
+class Recorder(PipelineModule):
     """
     Recorder pipeline module that records the current state of the
     pipeline data at a stage in the pipeline.
@@ -20,7 +27,11 @@ class Recorder(object):
         "Clear the recorded data"
         self.data = []
 
-    def process(self, source: List[Any], data: Optional[Any] = None) -> Iterator[Any]:
-        for s in source:
+    def process(
+        self,
+        elements: ProcessElementsType,
+        attributes: ProcessAttributesType = None,
+    ) -> ProcessReturnType:
+        for s in elements:
             self.data.append(s)
             yield s

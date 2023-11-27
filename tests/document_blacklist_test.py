@@ -4,7 +4,7 @@ from nltk_ext.filters.document_blacklist import DocumentBlacklist
 
 
 class DocumentBlacklistTestCase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.d1 = Document(
             {
                 "id": "1",
@@ -22,14 +22,17 @@ class DocumentBlacklistTestCase(unittest.TestCase):
         self.docs = [self.d1, self.d2]
         self.url_blacklist = ["^http://www.baddomain.com/"]
 
-    def test_document_blacklist(self):
+    def test_document_blacklist(self) -> None:
         blacklist = DocumentBlacklist("url", self.url_blacklist)
         docs = list(blacklist.process(self.docs))
         self.assertEqual(len(docs), 1)
-        self.assertEqual(docs[0].doc_id, "2")
+        if isinstance(docs[0], Document):
+            self.assertEqual(docs[0].doc_id, "2")
+        else:
+            self.fail("process should return list of documents")
 
 
-def suite():
+def suite() -> unittest.suite.TestSuite:
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     suite.addTest(loader.loadTestsFromTestCase(DocumentBlacklistTestCase))

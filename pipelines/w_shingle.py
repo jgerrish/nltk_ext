@@ -2,6 +2,15 @@
 from typing import Iterator, List, Optional, Union
 
 from nltk_ext.documents.document import Document
+from nltk_ext.pipelines.pipeline_module import (
+    PipelineModule,
+    ProcessElementsType,
+    ProcessAttributesType,
+)
+
+
+# Example of adding stronger type checks to a process return type
+ProcessReturnType = Iterator[Union[List[int], "Document"]]
 
 
 # Document pipeline module to generate w-shingles for a document
@@ -10,14 +19,16 @@ from nltk_ext.documents.document import Document
 # If a document attribute is given in the constructor, assign the
 # hashes to that attribute and yield the document.  Otherwise yield
 # the hashes themselves.
-class WShingle(object):
+class WShingle(PipelineModule):
     def __init__(self, ngram_size: int = 10, attribute: Optional[str] = None) -> None:
         self.ngram_size = ngram_size
         self.attribute = attribute
 
     def process(
-        self, documents: List[Union[Document, str]]
-    ) -> Iterator[Union[Document, List[int]]]:
+        self,
+        documents: ProcessElementsType,
+        attributes: ProcessAttributesType = None,
+    ) -> ProcessReturnType:
         for document in documents:
             if isinstance(document, Document):
                 ngrams = document.to_ngrams(self.ngram_size)

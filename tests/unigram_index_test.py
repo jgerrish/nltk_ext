@@ -3,13 +3,13 @@ from nltk_ext.documents.document import Document
 
 
 class UnigramIndexTestCase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.d1 = Document({"id": "1", "body": "This this."})
         self.d2 = Document({"id": "2", "body": "This is another test document."})
         self.d3 = Document({"id": "3", "body": "Two words."})
         self.d4 = Document({"id": "3", "body": "Derp a derp.\nA derp derp."})
 
-    def test_index(self):
+    def test_index(self) -> None:
         self.assertEqual(self.d1._index, None)
         self.assertEqual(self.d2._index, None)
         self.assertEqual(self.d3._index, None)
@@ -42,7 +42,7 @@ class UnigramIndexTestCase(unittest.TestCase):
         self.assertEqual(d3_index._freq_dist["."], 1)
 
 
-def suite():
+def suite() -> unittest.suite.TestSuite:
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     suite.addTest(loader.loadTestsFromTestCase(UnigramIndexTestCase))

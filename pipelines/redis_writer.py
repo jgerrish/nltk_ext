@@ -1,8 +1,12 @@
 import redis
-from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
+from typing import Any, Callable, List, Optional, Tuple
 
-from nltk_ext.documents.document import Document
-from nltk_ext.pipelines.pipeline_module import PipelineModule
+from nltk_ext.pipelines.pipeline_module import (
+    PipelineModule,
+    ProcessElementsType,
+    ProcessAttributesType,
+    ProcessReturnType,
+)
 
 
 class RedisWriter(PipelineModule):
@@ -44,10 +48,10 @@ class RedisWriter(PipelineModule):
 
     def process(
         self,
-        data: Union[List[str], List[Document]],
-        attributes: Optional[List[str]] = None,
-    ) -> Iterator[Union[str, Document]]:
-        for s in data:
+        elements: ProcessElementsType,
+        attributes: ProcessAttributesType = None,
+    ) -> ProcessReturnType:
+        for s in elements:
             op = self._operation_to_redis_method(self.operation)
             if self.custom_transform:
                 args = self.custom_transform(str(s))

@@ -32,7 +32,7 @@ class Document:
 
     def __init__(
         self,
-        data: Union[str, Dict[str, str]],
+        data: Union[str, Dict[Any, Any]],
         word_filters: List[Filter] = [],
     ) -> None:
         self.nltk_text = None
@@ -67,10 +67,12 @@ class Document:
         else:
             return ""
 
-    def __getitem__(self, k: str) -> str:
+    # TODO Add more tests around int vs str keys and make sure API is
+    # clean
+    def __getitem__(self, k: Any) -> str:
         return self.document[k]
 
-    def __contains__(self, k: str) -> bool:
+    def __contains__(self, k: Any) -> bool:
         return k in self.document
 
     def as_json(self) -> str:

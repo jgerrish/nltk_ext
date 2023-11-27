@@ -4,7 +4,7 @@ from nltk_ext.pipelines.boilerpipe_extractor import BoilerpipeExtractor
 
 
 class BoilerpipeExtractorTestCase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.d1 = HTMLDocument(
             {
                 "id": "1",
@@ -13,7 +13,7 @@ class BoilerpipeExtractorTestCase(unittest.TestCase):
         )
         self.docs = [self.d1]
 
-    def test_boilerpipe_extractor_docs(self):
+    def test_boilerpipe_extractor_docs(self) -> None:
         r = BoilerpipeExtractor()
         docs = list(r.process(self.docs))
         words = list(docs[0].words())
@@ -22,7 +22,7 @@ class BoilerpipeExtractorTestCase(unittest.TestCase):
         self.assertEqual(words[6], ".")
         self.assertEqual(words[7], "another")
 
-    def test_boilerpipe_extractor_strings(self):
+    def test_boilerpipe_extractor_strings(self) -> None:
         r = BoilerpipeExtractor()
         docs = list(r.process([self.d1["body"]]))
         words = docs[0]
@@ -32,7 +32,7 @@ class BoilerpipeExtractorTestCase(unittest.TestCase):
         self.assertEqual(words[34], "A")
 
 
-def suite():
+def suite() -> unittest.suite.TestSuite:
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     suite.addTest(loader.loadTestsFromTestCase(BoilerpipeExtractorTestCase))

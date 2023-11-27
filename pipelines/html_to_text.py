@@ -1,9 +1,12 @@
 # HTML to text module for converting HTML documents to text
 from bs4 import BeautifulSoup
-from typing import Iterator, List, Optional, Union
 
-from nltk_ext.documents.document import Document
-from nltk_ext.pipelines.pipeline_module import PipelineModule
+from nltk_ext.pipelines.pipeline_module import (
+    PipelineModule,
+    ProcessElementsType,
+    ProcessAttributesType,
+    ProcessReturnType,
+)
 
 
 class HtmlToTextPipeline(PipelineModule):
@@ -18,10 +21,10 @@ class HtmlToTextPipeline(PipelineModule):
 
     def process(
         self,
-        data: Union[List[str], List[Document]],
-        attributes: Optional[List[str]] = None,
-    ) -> Iterator[Union[str, Document]]:
-        for doc in data:
+        elements: ProcessElementsType,
+        attributes: ProcessAttributesType = None,
+    ) -> ProcessReturnType:
+        for doc in elements:
             if type(doc) == str:
                 self.soup = BeautifulSoup(doc, self.parser)
             else:

@@ -7,7 +7,12 @@ import random
 
 # dictionary with increment or set operation
 from collections import defaultdict
+from typing import Any, Dict, List
+
 from progressbar import Percentage, ProgressBar, Bar, ETA
+
+from nltk_ext.corpus.corpus import Corpus
+from nltk_ext.documents.document import Document
 
 
 burn_in_bar_tmpl = [
@@ -32,25 +37,25 @@ sample_bar_tmpl = [
 class LDAGibbsSampler:
     def __init__(
         self,
-        documents,
-        num_topics=10,
-        alpha=2.0,
-        beta=0.5,
-        num_iterations=1000,
-        burn_in_len=100,
-        thin_interval=100,
-        sample_lag=10,
-    ):
+        documents: Corpus,
+        num_topics: int = 10,
+        alpha: float = 2.0,
+        beta: float = 0.5,
+        num_iterations: int = 1000,
+        burn_in_len: int = 100,
+        thin_interval: int = 100,
+        sample_lag: int = 10,
+    ) -> None:
         self.documents = documents
         # number of words in a document assigned to a topic
-        self.document_topic_count = {}
+        self.document_topic_count: Dict[str, Dict[int, int]] = {}
         # number of terms assigned to each topic
-        self.topic_term_count = defaultdict(int)
-        self.document_topic_sum = {}
+        self.topic_term_count = defaultdict(int)  # type: ignore[var-annotated]
+        # self.document_topic_sum: Dict[int, Dict[int, int]] = {}
         # total number of words assigned to a topic
-        self.topic_term_sum = defaultdict(int)
-        self.document_topic_sum = defaultdict(int)
-        self.doc_word_topic = {}
+        self.topic_term_sum = defaultdict(int)  # type: ignore[var-annotated]
+        self.document_topic_sum = defaultdict(int)  # type: ignore[var-annotated]
+        self.doc_word_topic = {}  # type: ignore[var-annotated]
         self.num_topics = num_topics
 
         self.alpha = alpha
@@ -64,7 +69,7 @@ class LDAGibbsSampler:
         self.build_term_index()
         self.initialize()
 
-    def build_term_index(self):
+    def build_term_index(self) -> None:
         # Build term index
         self.terms = set()
         for document in self.documents:
@@ -77,7 +82,7 @@ class LDAGibbsSampler:
         for i, term in enumerate(self.term_list):
             self.term_index[term] = i
 
-    def inc_counts(self, document, word, word_idx):
+    def inc_counts(self, document: Document, word: str, word_idx: int) -> None:
         t_i = self.term_index[word]
         k = random.randint(0, self.num_topics - 1)
         if document.doc_id not in self.doc_word_topic:
@@ -91,7 +96,7 @@ class LDAGibbsSampler:
         self.topic_term_count[k][t_i] += 1
         self.topic_term_sum[k] += 1
 
-    def dec_counts(self, document, word, word_idx):
+    def dec_counts(self, document: Document, word: str, word_idx: int) -> None:
         t_i = self.term_index[word]
         k = self.doc_word_topic[document.doc_id][word_idx]
         self.document_topic_count[document.doc_id][k] -= 1
@@ -99,7 +104,7 @@ class LDAGibbsSampler:
         self.topic_term_count[k][t_i] -= 1
         self.topic_term_sum[k] -= 1
 
-    def sample(self, document, word, word_idx):
+    def sample(self, document: Document, word: str, word_idx: int) -> str:
         m = [None] * self.num_topics
         t_i = self.term_index[word]
         k = self.doc_word_topic[document.doc_id][word_idx]
@@ -118,10 +123,10 @@ class LDAGibbsSampler:
                 t2 = (
                     self.document_topic_count[document.doc_id][k] + self.alpha
                 ) / denom
-            m[i] = t1 * t2
+            m[i] = t1 * t2  # type: ignore[call-overload]
 
         for i in range(self.num_topics - 1):
-            m[i + 1] += m[i]
+            m[i + 1] += m[i]  # type: ignore[operator]
 
         u = random.randint(0, self.num_topics - 1)
         for k in range(self.num_topics):
@@ -130,7 +135,7 @@ class LDAGibbsSampler:
 
         return k
 
-    def initialize(self):
+    def initialize(self) -> None:
         self.thetasum = {}
         self.phisum = []
         for document in self.documents:
@@ -144,7 +149,7 @@ class LDAGibbsSampler:
 
         self.num_stats = 0
 
-    def update_progress_bar(self, i):
+    def update_progress_bar(self, i: int) -> None:
         if i < self.burn_in_len:
             if i == 0:
                 self.burn_in_pbar.start()
@@ -157,7 +162,7 @@ class LDAGibbsSampler:
             if i == self.num_iterations:
                 self.sample_pbar.finish()
 
-    def update_params(self):
+    def update_params(self) -> None:
         for document in self.documents:
             for k in range(self.num_topics):
                 self.thetasum[document.doc_id][k] += (
@@ -174,8 +179,8 @@ class LDAGibbsSampler:
                 )
         self.num_stats += 1
 
-    def get_theta(self):
-        theta = {}
+    def get_theta(self) -> Dict[Any, List[Any]]:
+        theta: Dict[Any, List[Any]] = {}
         for document in self.documents:
             theta[document.doc_id] = []
             for k in range(self.num_topics):
@@ -184,8 +189,8 @@ class LDAGibbsSampler:
 
         return theta
 
-    def get_phi(self):
-        phi = {}
+    def get_phi(self) -> Dict[Any, List[Any]]:
+        phi: Dict[Any, List[Any]] = {}
         for k in range(self.num_topics):
             phi[k] = []
             for w in range(self.num_terms):
@@ -194,11 +199,11 @@ class LDAGibbsSampler:
         return phi
 
     # TODO Add a test for the below
-    def print_stats(self):
+    def print_stats(self) -> None:
         theta = self.get_theta()
         phi = self.get_phi()
 
-        tw = {}
+        tw: Dict[Any, Any] = {}
         # TODO Add a test for the below
         print("topic - words:")
         topic_words = []
@@ -219,7 +224,7 @@ class LDAGibbsSampler:
             print("document {}: ".format(str(document.doc_id)))
             d = theta[document.doc_id]
             topic_scores = dict(zip(range(self.num_topics), d))
-            s = sorted(topic_scores.iteritems(), key=operator.itemgetter(1))
+            s = sorted(topic_scores.iteritems(), key=operator.itemgetter(1))  # type: ignore[attr-defined]
             s.reverse()
             for t in s:
                 print("Topic {}: {}".format(str(t[0]), str(t[1])))
@@ -229,7 +234,7 @@ class LDAGibbsSampler:
         f.write(json.dumps(g, sort_keys=True, indent=4, separators=(",", ": ")))
         f.close()
 
-    def sampler(self, progress_bar=True):
+    def sampler(self, progress_bar: bool = True) -> None:
         if progress_bar:
             self.burn_in_pbar = ProgressBar(
                 widgets=burn_in_bar_tmpl, maxval=self.burn_in_len

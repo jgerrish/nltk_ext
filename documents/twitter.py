@@ -1,5 +1,7 @@
-from nltk_ext.documents.document import Document
 from dateutil import parser
+from typing import Any, Dict
+
+from nltk_ext.documents.document import Document
 
 
 class TwitterDocument(Document):
@@ -7,7 +9,7 @@ class TwitterDocument(Document):
 
     BodyAttribute = "text"
 
-    def __init__(self, data):
+    def __init__(self, data: Dict[str, Any]) -> None:
         self.length = 0
         d = {}
         if "created_at" in data:

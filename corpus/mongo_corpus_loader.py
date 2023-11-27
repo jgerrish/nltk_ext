@@ -1,34 +1,37 @@
-from nltk_ext.corpus import Corpus
-from nltk_ext.documents.document import Document
 from progressbar import Percentage, ProgressBar, Bar, ETA
-from readers.mongodb import MongoDBReader
+from typing import List, Optional
+
+from nltk_ext.corpus.corpus import Corpus
+from nltk_ext.documents.document import Document
+from nltk_ext.readers.mongodb import MongoDBReader
 
 
 class MongoCorpusLoader:
-    def __init__(self, max_cnt=200000000):
+    def __init__(self, max_cnt: int = 200000000) -> None:
         self.documents = Corpus()
         self.max_cnt = max_cnt
 
-    def process(self, data, fields=None):
+    def process(self, data: Document, fields: Optional[List[str]] = None) -> Corpus:
         if fields is not None:
             d = {}
             for field in fields:
                 if field in data:
                     d[field] = data[field]
+            doc = Document(d)
         else:
-            d = data.copy()
-        doc = Document(d)
+            # TODO Double check this change, add a test
+            doc = data
         self.documents.add(doc)
 
         return self.documents
 
     def load(
         self,
-        dbname="spout_test",
-        collection="good_documents",
-        fields=None,
-        progress_bar=True,
-    ):
+        dbname: str = "spout_test",
+        collection: str = "good_documents",
+        fields: Optional[List[str]] = None,
+        progress_bar: bool = True,
+    ) -> Corpus:
         self.reader = MongoDBReader(dbname, collection)
 
         num_docs = self.reader.collection.count()

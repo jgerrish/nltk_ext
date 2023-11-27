@@ -4,6 +4,7 @@ from typing import Any, Callable, Iterator, List, Optional, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from nltk_ext.documents.document import Document
+    from nltk_ext.documents.html_document import HTMLDocument
 
 from nltk_ext.util import consume
 
@@ -34,13 +35,15 @@ class enumModuleProcessingType(Enum):
 # TODO Add more checks around this.
 # TODO make sure aligned with the CustomFilter init (e.g. union of lists of
 # list of unions) and other callback users.
-CallbackType = Callable[[Union[List[str], List["Document"]], List[str]], Any]
+CallbackType = Callable[
+    [Union[List[str], List["Document"], List["HTMLDocument"]], List[str]], Any
+]
 
 # The function signature for the process method
 # Defining these here is easier for maintenance, but
 # it makes understanding what they do in each individual subclass more
 # difficult.
-ProcessElementsType = Union[List[str], List["Document"]]
+ProcessElementsType = Union[List[str], List["Document"], List["HTMLDocument"]]
 ProcessAttributesType = Optional[List[str]]
 ProcessReturnType = Iterator[Union[Any, "Document"]]
 
@@ -79,7 +82,7 @@ class PipelineModule:
 
         yield res
 
-    @abstractmethod
+    # @abstractmethod
     def process_iterator(
         self,
         elements: ProcessIteratorElementsType,

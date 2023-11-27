@@ -1,8 +1,13 @@
-from typing import Any, Callable, Iterator, Union
+from typing import Callable, Union
 
 # Filter documents using a custom filter function
 from nltk_ext.documents.document import Document
 from nltk_ext.filters.filter import Filter
+from nltk_ext.pipelines.pipeline_module import (
+    ProcessElementsType,
+    ProcessAttributesType,
+    ProcessReturnType,
+)
 
 
 class CustomFilter(Filter):
@@ -17,13 +22,17 @@ class CustomFilter(Filter):
         self.custom_func = custom_func
 
     def filter(
-        self, elements: Union[list[str], list[Document]]
-    ) -> Iterator[Union[str, Document]]:
+        self,
+        elements: ProcessElementsType,
+        attributes: ProcessAttributesType = None,
+    ) -> ProcessReturnType:
         for elem in elements:
             if self.custom_func(elem):
                 yield elem
 
     def process(
-        self, elements: Union[list[str], list[Document]], data: Any = None
-    ) -> Iterator[Union[str, Document]]:
+        self,
+        elements: ProcessElementsType,
+        attributes: ProcessAttributesType = None,
+    ) -> ProcessReturnType:
         return self.filter(elements)

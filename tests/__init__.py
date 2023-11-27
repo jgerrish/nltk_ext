@@ -1,7 +1,8 @@
 import os
+import unittest
 
 
-def suite():
+def suite() -> unittest.suite.TestSuite:
     import unittest
 
     this_dir = os.path.dirname(__file__)
@@ -12,7 +13,11 @@ def suite():
     return standard_tests
 
 
-def load_tests(loader, standard_tests, pattern):
+def load_tests(
+    loader: unittest.TestLoader,
+    standard_tests: unittest.suite.TestSuite,
+    pattern: str,
+) -> unittest.suite.TestSuite:
     # top level directory cached on loader instance
     this_dir = os.path.dirname(__file__)
     package_tests = loader.discover(start_dir=this_dir)
@@ -25,4 +30,4 @@ if __name__ == "__main__":
 
     loader = unittest.defaultTestLoader
     standard_tests = unittest.TestSuite()
-    unittest.TextTestRunner(verbosity=2).run(loader, standard_tests, "*_test.py")
+    unittest.TextTestRunner(verbosity=2).run(standard_tests)

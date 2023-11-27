@@ -2,7 +2,7 @@
 # to a set of corpora, with each corpus corresponding to a single tag/category
 import json
 import pprint
-from typing import Dict, Iterator, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from nltk_ext.corpus.corpus import Corpus
 from nltk_ext.documents.document import Document
@@ -10,6 +10,9 @@ from nltk_ext.pipelines.pipeline_module import (
     enumModuleType,
     enumModuleProcessingType,
     PipelineModule,
+    ProcessElementsType,
+    ProcessAttributesType,
+    ProcessReturnType,
 )
 
 # TODO Should use a Corpus in corpora instead of a list of documents
@@ -69,9 +72,9 @@ class CategoryToCorpus(PipelineModule):
 
     def process(
         self,
-        data: Union[List[str], List[Document]],
-        attributes: Optional[List[str]] = None,
-    ) -> Iterator[Union[str, Document]]:
+        elements: ProcessElementsType,
+        attributes: ProcessAttributesType = None,
+    ) -> ProcessReturnType:
         """
         Process the documents.  The code looks at the attribute
         attribute, which should be a list or dictionary,
@@ -80,7 +83,7 @@ class CategoryToCorpus(PipelineModule):
         If category is set, it only builds a single corpus containing
         documents with that category.
         """
-        for doc in data:
+        for doc in elements:
             if type(doc) == str:
                 return
             if isinstance(doc, Document) and (self.attribute in doc.document):

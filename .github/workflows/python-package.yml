@@ -41,4 +41,4 @@ jobs:
         pytest
     - name: Run mypy for static type checking
       run: |
-        mypy --config-file mypi.ini */*.py
+        mypy --config-file mypy.ini */*.py

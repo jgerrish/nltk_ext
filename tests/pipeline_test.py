@@ -12,12 +12,12 @@ class PipelineTestCase(unittest.TestCase):
     Test a simple pipeline with several pipeline modules
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.d1 = Document({"id": "1", "body": "A stopword test."})
         self.d2 = Document({"id": "2", "body": "A stopword test and a unique test."})
         self.corpus = Corpus([self.d1, self.d2])
 
-    def test_pipeline(self):
+    def test_pipeline(self) -> None:
         recorder = Recorder([])
         pipeline = GeneratorPipeline([Uniq(), recorder, StopwordFilter()])
         words = pipeline.process(self.d2.words())
@@ -39,7 +39,7 @@ class PipelineTestCase(unittest.TestCase):
         self.assertEqual(word_list[5], ".")
 
 
-def suite():
+def suite() -> unittest.suite.TestSuite:
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     suite.addTest(loader.loadTestsFromTestCase(PipelineTestCase))

@@ -1,4 +1,7 @@
 from abc import abstractmethod
+from typing import Any, Dict
+
+from nltk_ext.documents.document import Document
 
 
 class Parser:
@@ -21,5 +24,5 @@ class Parser:
     """
 
     @abstractmethod
-    def parse(self, data, attributes=None):
+    def parse(self, data: Dict[str, Any], attributes: Any = None) -> Document:
         pass

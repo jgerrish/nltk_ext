@@ -1,3 +1,5 @@
+from typing import Any, List
+
 from nltk_ext.documents.document import Document
 
 
@@ -5,7 +7,7 @@ class HTMLDocument(Document):
     BodyAttribute = "body_text"
     # BodyAttribute = "title"
 
-    def __init__(self, data, word_filters=[]):
+    def __init__(self, data: Any, word_filters: List[Any] = []) -> None:
         if type(data) == str:
             self.document = {}
             self.document[Document.BodyAttribute] = data

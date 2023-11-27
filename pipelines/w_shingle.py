@@ -1,5 +1,16 @@
 # w-shingling generator
+from typing import Iterator, List, Optional, Union
+
 from nltk_ext.documents.document import Document
+from nltk_ext.pipelines.pipeline_module import (
+    PipelineModule,
+    ProcessElementsType,
+    ProcessAttributesType,
+)
+
+
+# Example of adding stronger type checks to a process return type
+ProcessReturnType = Iterator[Union[List[int], "Document"]]
 
 
 # Document pipeline module to generate w-shingles for a document
@@ -8,12 +19,16 @@ from nltk_ext.documents.document import Document
 # If a document attribute is given in the constructor, assign the
 # hashes to that attribute and yield the document.  Otherwise yield
 # the hashes themselves.
-class WShingle(object):
-    def __init__(self, ngram_size=10, attribute=None):
+class WShingle(PipelineModule):
+    def __init__(self, ngram_size: int = 10, attribute: Optional[str] = None) -> None:
         self.ngram_size = ngram_size
         self.attribute = attribute
 
-    def process(self, documents):
+    def process(
+        self,
+        documents: ProcessElementsType,
+        attributes: ProcessAttributesType = None,
+    ) -> ProcessReturnType:
         for document in documents:
             if isinstance(document, Document):
                 ngrams = document.to_ngrams(self.ngram_size)
@@ -27,7 +42,7 @@ class WShingle(object):
             # If your use cases involve long-term storage, this is
             # probably a good addition.
             hashes = [hash(ng) for ng in uniq]
-            if self.attribute:
+            if isinstance(document, Document) and self.attribute:
                 document.set(self.attribute, hashes)
                 yield document
             else:

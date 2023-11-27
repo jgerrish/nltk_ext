@@ -4,12 +4,12 @@ from nltk_ext.filters.regexp import RegexpFilter
 
 
 class RegexpFilterTestCase(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.d1 = Document(
             {"id": "1", "body": "A stopword test."}, [RegexpFilter("^.$")]
         )
 
-    def test_document(self):
+    def test_document(self) -> None:
         words = []
         for word in self.d1.words():
             words.append(word)
@@ -18,7 +18,7 @@ class RegexpFilterTestCase(unittest.TestCase):
         self.assertEqual(words[1], "test")
 
 
-def suite():
+def suite() -> unittest.suite.TestSuite:
     loader = unittest.TestLoader()
     suite = unittest.TestSuite()
     suite.addTest(loader.loadTestsFromTestCase(RegexpFilterTestCase))

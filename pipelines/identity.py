@@ -1,8 +1,20 @@
-class Identity(object):
+from nltk_ext.pipelines.pipeline_module import (
+    PipelineModule,
+    ProcessElementsType,
+    ProcessAttributesType,
+    ProcessReturnType,
+)
+
+
+class Identity(PipelineModule):
     """
     Identity pipeline module that simply yields the stream
     """
 
-    def process(self, source, data=None):
-        for s in source:
-            yield s
+    def process(
+        self,
+        elements: ProcessElementsType,
+        attributes: ProcessAttributesType = None,
+    ) -> ProcessReturnType:
+        for e in elements:
+            yield e

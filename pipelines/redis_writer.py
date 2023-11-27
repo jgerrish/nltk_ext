@@ -1,5 +1,12 @@
 import redis
-from nltk_ext.pipelines.pipeline_module import PipelineModule
+from typing import Any, Callable, List, Optional, Tuple
+
+from nltk_ext.pipelines.pipeline_module import (
+    PipelineModule,
+    ProcessElementsType,
+    ProcessAttributesType,
+    ProcessReturnType,
+)
 
 
 class RedisWriter(PipelineModule):
@@ -9,7 +16,14 @@ class RedisWriter(PipelineModule):
     and a transform method to transform the data for writing.
     """
 
-    def __init__(self, operation, custom_transform, host="localhost", port=6379, db=0):
+    def __init__(
+        self,
+        operation: str,
+        custom_transform: Callable[[str], str],
+        host: str = "localhost",
+        port: int = 6379,
+        db: int = 0,
+    ) -> None:
         self.redis = redis.StrictRedis(host=host, port=port, db=db)
         if not operation:
             raise Exception("RedisWriter requires an operation")
@@ -20,25 +34,30 @@ class RedisWriter(PipelineModule):
             )
         self.custom_transform = custom_transform
 
-    def _operation_to_redis_method(self, operation):
+    def _operation_to_redis_method(self, operation: str) -> Optional[Any]:
         "small set of restricted operations"
         if operation == "hset":
             return self.redis.hset
         elif operation == "sadd":
             return self.redis.sadd
+        return None
 
-    def apply(self, op, args):
+    def apply(self, op: Callable[[Any], Any], args: Tuple[List[Any]]) -> None:
         for arg in args:
             op(arg)
 
-    def process(self, data=None):
-        for s in data:
+    def process(
+        self,
+        elements: ProcessElementsType,
+        attributes: ProcessAttributesType = None,
+    ) -> ProcessReturnType:
+        for s in elements:
             op = self._operation_to_redis_method(self.operation)
             if self.custom_transform:
-                args = self.custom_transform(s)
+                args = self.custom_transform(str(s))
             else:
-                args = data
+                args = str(s)
             # args.insert(0, self.redis)
             # TODO Add a test for the below
-            self.apply(op, tuple(args))
+            self.apply(op, tuple(args))  # type: ignore[arg-type]
             yield s

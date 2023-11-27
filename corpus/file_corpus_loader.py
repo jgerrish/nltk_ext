@@ -1,15 +1,19 @@
 import glob
+from typing import Dict, List, Optional
+
 from nltk_ext.corpus.corpus import Corpus
 from nltk_ext.documents.document import Document
 from progressbar import Percentage, ProgressBar, Bar, ETA
 
 
 class FileCorpusLoader:
-    def __init__(self, max_cnt=200000000):
+    def __init__(self, max_cnt: int = 200000000) -> None:
         self.documents = Corpus()
         self.max_cnt = max_cnt
 
-    def process(self, data, fields=None):
+    def process(
+        self, data: Dict[str, str], fields: Optional[List[str]] = None
+    ) -> Corpus:
         if fields is not None:
             d = {}
             for field in fields:
@@ -24,10 +28,10 @@ class FileCorpusLoader:
 
     def load(
         self,
-        directory,
-        fields=None,
-        progress_bar=True,
-    ):
+        directory: str,
+        fields: Optional[List[Dict[str, str]]] = None,
+        progress_bar: bool = True,
+    ) -> Corpus:
         files = glob.glob(directory + "/*.txt")
 
         num_docs = len(files)

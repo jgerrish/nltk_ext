@@ -33,7 +33,7 @@ class Document:
     def __init__(
         self,
         data: Union[str, Dict[Any, Any]],
-        word_filters: List[Filter] = [],
+        word_filters: Optional[List[Filter]] = None,
     ) -> None:
         self.nltk_text = None
         self.body_attribute = Document.BodyAttribute
@@ -48,7 +48,10 @@ class Document:
             self.document = data.copy()
         if "id" in self.document:
             self.set_doc_id(self.document["id"])
-        self.word_filters = word_filters
+        if word_filters is not None:
+            self.word_filters = word_filters
+        else:
+            self.word_filters = []
 
     def __len__(self) -> int:
         "length of the document in characters"

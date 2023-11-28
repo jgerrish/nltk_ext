@@ -1,13 +1,14 @@
-from typing import Any, List
+from typing import Any, List, Optional
 
 from nltk_ext.documents.document import Document
+from nltk_ext.filters.filter import Filter
 
 
 class HTMLDocument(Document):
     BodyAttribute = "body_text"
     # BodyAttribute = "title"
 
-    def __init__(self, data: Any, word_filters: List[Any] = []) -> None:
+    def __init__(self, data: Any, word_filters: Optional[List[Filter]] = None) -> None:
         if type(data) == str:
             self.document = {}
             self.document[Document.BodyAttribute] = data
@@ -31,7 +32,10 @@ class HTMLDocument(Document):
             self.metadata = self.document["metadata"]
 
         self._freq_dist = None
-        self.word_filters = word_filters
+        if word_filters is not None:
+            self.word_filters = word_filters
+        else:
+            self.word_filters = []
         # super(HTMLDocument, self).__init__(data)
         # super(self.__class__, self).__init__(data)
         # Document.__init__(self, data)

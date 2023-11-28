@@ -120,7 +120,7 @@ class Document:
             words = nltk.tokenize.word_tokenize(sentence)
             if lowercase:
                 words = self.lowercase_words(words)
-            if filtered:
+            if filtered and (self.word_filters is not None):
                 for f in self.word_filters:
                     words = f.filter(words)
             all_words += words

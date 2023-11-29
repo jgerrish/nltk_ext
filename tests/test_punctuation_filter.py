@@ -1,10 +1,12 @@
 import pytest
+from typing import List
+
 from nltk_ext.documents.document import Document
 from nltk_ext.filters.punctuation import PunctuationFilter
 
 
-@pytest.fixture()
-def setup_default():
+@pytest.fixture
+def setup_default() -> List[Document]:
     "Create documents with the default non-alphanumeric punctuation filter"
     punctuation_filter = PunctuationFilter()
     d1 = Document(
@@ -27,8 +29,8 @@ def setup_default():
     return [d1, d2, d3, d4]
 
 
-@pytest.fixture()
-def setup_alpha():
+@pytest.fixture
+def setup_alpha() -> List[Document]:
     "Create documents with an non-alphabetic punctuation filter"
     punctuation_filter = PunctuationFilter(lambda x: x.isalpha())
     d1 = Document(
@@ -51,7 +53,7 @@ def setup_alpha():
     return [d1, d2, d3, d4]
 
 
-def test_words_default_period(setup_default):
+def test_words_default_period(setup_default: List[Document]) -> None:
     "Test that a period is removed with the default filter"
     docs = setup_default
     words = []
@@ -62,7 +64,7 @@ def test_words_default_period(setup_default):
     assert words[1] == "document"
 
 
-def test_words_default_number(setup_default):
+def test_words_default_number(setup_default: List[Document]) -> None:
     "Test that 2 is not removed with an alphanumeric filter"
     docs = setup_default
     words = []
@@ -73,7 +75,7 @@ def test_words_default_number(setup_default):
     assert words[1] == "2"
 
 
-def test_words_default_number_alpha(setup_default):
+def test_words_default_number_alpha(setup_default: List[Document]) -> None:
     "Test that 3rd is not removed with an alphanumeric filter"
     docs = setup_default
     words = []
@@ -84,7 +86,7 @@ def test_words_default_number_alpha(setup_default):
     assert words[1] == "document"
 
 
-def test_words_default_alpha_number(setup_default):
+def test_words_default_alpha_number(setup_default: List[Document]) -> None:
     "Test that num4 is not removed with an alphanumeric filter"
     docs = setup_default
     words = []
@@ -95,7 +97,7 @@ def test_words_default_alpha_number(setup_default):
     assert words[1] == "document"
 
 
-def test_words_alpha_period(setup_alpha):
+def test_words_alpha_period(setup_alpha: List[Document]) -> None:
     "Test that a period is removed with an alphabetic filter"
     docs = setup_alpha
     words = []
@@ -106,7 +108,7 @@ def test_words_alpha_period(setup_alpha):
     assert words[1] == "document"
 
 
-def test_words_alpha_number(setup_alpha):
+def test_words_alpha_number(setup_alpha: List[Document]) -> None:
     "Test that 2 is removed with an alphabetic filter"
     docs = setup_alpha
     words = []
@@ -116,7 +118,7 @@ def test_words_alpha_number(setup_alpha):
     assert words[0] == "document"
 
 
-def test_words_alpha_number_alpha(setup_alpha):
+def test_words_alpha_number_alpha(setup_alpha: List[Document]) -> None:
     "Test that 3rd is removed with an alphabetic filter"
     docs = setup_alpha
     words = []
@@ -126,7 +128,7 @@ def test_words_alpha_number_alpha(setup_alpha):
     assert words[0] == "document"
 
 
-def test_words_alpha_alpha_number(setup_alpha):
+def test_words_alpha_alpha_number(setup_alpha: List[Document]) -> None:
     "Test that num4 is removed with an alphabetic filter"
     docs = setup_alpha
     words = []

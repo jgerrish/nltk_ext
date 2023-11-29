@@ -1,3 +1,5 @@
+from typing import Callable
+
 from nltk_ext.filters.custom_filter import CustomFilter
 
 
@@ -16,7 +18,7 @@ class PunctuationFilter(CustomFilter):
     questions to ask.
     """
 
-    def __init__(self, func=None):
+    def __init__(self, func: Callable[[str], bool] = None) -> None:
         """
         Initialize the PunctucationFilter with an appropriate string
         function.

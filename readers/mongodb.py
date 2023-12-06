@@ -13,8 +13,8 @@ from nltk_ext.documents.html_document import HTMLDocument
 class MongoDBReader:
     def __init__(
         self,
-        db: str = "spout_test",
-        collection: str = "documents",
+        db: str = "db_name",
+        collection: str = "collection_name",
     ) -> None:
         self.mongodb_client = MongoClient()
         self.db = self.mongodb_client[db]

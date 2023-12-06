@@ -17,7 +17,7 @@ class MongoWriter(PipelineModule):
 
     def __init__(
         self,
-        db: str = "spout_test",
+        db: str = "db_name",
         collection: str = "documents",
         operation: str = "insert",
         keys: List[str] = [],

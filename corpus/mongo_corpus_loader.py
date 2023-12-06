@@ -27,8 +27,8 @@ class MongoCorpusLoader:
 
     def load(
         self,
-        dbname: str = "spout_test",
-        collection: str = "good_documents",
+        dbname: str = "db_name",
+        collection: str = "collection_name",
         fields: Optional[List[str]] = None,
         progress_bar: bool = True,
     ) -> Corpus:

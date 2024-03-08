@@ -1,4 +1,6 @@
-# Simple document corpus / collection
+"""
+Simple document corpus / collection
+"""
 import importlib.util
 import math
 import operator
@@ -29,10 +31,16 @@ class ScikitLearnNotInstalledException(Exception):
 
 
 class Corpus:
+    """A Corpus class that holds a collection of documents
+
+    This class holds a collection of documents and provides several
+    methods for indexing and computing statistics on the documents.
+    """
     def __init__(self, documents: List[Document] = None) -> None:
-        """
-        Corpus constructor
-        documents is a list of documents
+        """Corpus constructor
+
+        Arguments:
+          documents: a list of documents to add to the corpus
         """
         self.docs = {}
         if documents:
@@ -49,9 +57,11 @@ class Corpus:
     # def neighbors(self, document, window_size=9)
 
     def __len__(self) -> int:
+        """Returns the number of documents in the Corpus"""
         return len(self.docs.keys())
 
     def __contains__(self, a: str) -> bool:
+        """Returns the document with the given id in the Corpus"""
         return a in self.docs
 
     def __getitem__(self, x: str) -> Document:
@@ -80,9 +90,30 @@ class Corpus:
         return [self.__getitem__(x[0][0]) for x in filtered]
 
     def _sort_dict_by_value(self, d: Dict[Any, Any]) -> List[Tuple[Any, Any]]:
+        """Sort a dictionary by value
+
+        Arguments:
+          d: The dictionary to sort by value
+
+        Returns:
+          The dictionary sorted by value
+        """
         return sorted(iter(d.items()), key=operator.itemgetter(1))
 
     def _sorted_dict_index(self, pairs: List[Tuple[Any, Any]]) -> List[Any]:
+        """Return the index tuple in a tuple pair list
+
+        Given a list of tuple pairs, return the first item in each
+        tuple pair for all items in the list.
+
+        Example: [("a", 1), ("b", 2), ("c", 3)] -> ['a', 'b', 'c']
+
+        Arguments:
+          pairs: A list of tuple pairs
+
+        Returns:
+          A list of the first element of each tuple pair
+        """
         return [i for i, j in pairs]
 
     def add(self, document: Document) -> None:
@@ -97,6 +128,7 @@ class Corpus:
         self.clear_indexes()
 
     def clear_indexes(self) -> None:
+        """Clear the indexes on this Corpus"""
         self.doc_lens: Optional[Dict[str, int]] = None
         self.dist_matrix: Optional[Dict[Tuple[str, str], float]] = None
         self.sorted_by_len: Optional[List[str]] = None
@@ -105,6 +137,11 @@ class Corpus:
 
     # TODO Add tests for this
     def generate_doc_lens(self) -> None:
+        """Generate and store document lengths
+
+        This method finds the length of each document and stores it in
+        the doc_lens member variable.
+        """
         self.doc_lens = {}
         for document in self.docs.values():
             shn = len(document)
@@ -121,6 +158,18 @@ class Corpus:
         document: Document,
         dist_func: Callable[["Corpus", str, str], float] = char_dist,
     ) -> dict[str, float]:
+        """Generate a distance vector for a document
+
+        Generate a distance vector for a given document with a given
+        distance function.
+
+        Arguments:
+          document: The document to use to build a distance vector
+          dist_func: The distance function
+
+        Returns:
+          The distance vector
+        """
         doc_id = None
         if isinstance(document, Document):
             doc_id = document.doc_id
@@ -135,6 +184,7 @@ class Corpus:
 
     # TODO Add tests for this
     def generate_dist_matrix(self) -> None:
+        """Generate a distance matrix for this corpus"""
         if self.doc_lens is None:
             self.generate_doc_lens()
         if self.dist_matrix is None:
@@ -143,6 +193,7 @@ class Corpus:
         #     self.dist_matrix[doc1] = generate_dist_vector(doc1)
 
     def _generate_neighbor_list(self) -> None:
+        """Generate a neighbor list for this corpus"""
         if self.doc_lens is None:
             self.generate_doc_lens()
         self.sorted_by_len = self._sorted_dict_index(
@@ -153,10 +204,19 @@ class Corpus:
             self.inverse_len_index[val] = idx
 
     def generate_neighbor_list(self, document: Document) -> List[Tuple[str, float]]:
+        """Generate a neighbor list for document
+
+        Arguments:
+          document: The document to generate a neighbor list
+
+        Returns:
+          The distance vector
+        """
         dist_vector = self.generate_dist_vector(document)
         return self._sort_dict_by_value(dist_vector)
 
     def next(self) -> Document:
+        """Return the next item in the iterator"""
         if self.cursor_position >= len(self.found_docs):
             raise StopIteration
         else:
@@ -165,11 +225,13 @@ class Corpus:
             return doc
 
     def __iter__(self) -> Self:
+        """Get an iterator for this Corpus"""
         self.cursor_position = 0
         self.found_docs: List[str] = list(self.docs.keys())
         return self
 
     def __next__(self) -> Document:
+        """Return the next item in the iterator"""
         if self.cursor_position >= len(self.found_docs):
             raise StopIteration
         else:
@@ -178,6 +240,12 @@ class Corpus:
             return self.docs[doc]
 
     def to_nltk_text_collection(self) -> Union[None, "Corpus"]:
+        """Generate a NLTK TextCollection from this Corpus
+
+        Returns:
+          None if a TextCollection couldn't be generated, otherwise it
+          returns a TextCollection with the documents.
+        """
         if self.nltk_text_collection:
             return self.nltk_text_collection
         else:
@@ -189,6 +257,11 @@ class Corpus:
 
     # wtf nltk
     def index(self) -> None:
+        """Build a term index for the Corpus
+
+        Builds a term index for this document and stores it in the
+        term_index member variable.
+        """
         for k in self.docs.keys():
             for word in self.docs[k].words():
                 if word in self.term_index:
@@ -198,6 +271,19 @@ class Corpus:
                     self.term_index[word].add(k)
 
     def df(self, term: str) -> float:
+        """Find the document frequency for a given term
+
+        Finds the number of documents a term occurs in.
+
+        If the term occurs more than once in a document, it is only counted
+        once for that document.
+
+        Arguments:
+          term: the term to look up
+
+        Returns:
+          The number of documents the term occurs in
+        """
         if not self.term_index:
             self.index()
         # self.pp.pprint(self.term_index)
@@ -207,6 +293,14 @@ class Corpus:
             return 0
 
     def idf(self, term: str) -> float:
+        """Find the inverse document frequency for a given term
+
+        Arguments:
+          term: the term to look up
+
+        Returns:
+          The inverse document frequency of the term
+        """
         df = self.df(term)
         if df == 0.0:
             return 0.0
@@ -215,12 +309,39 @@ class Corpus:
 
     # Use non-augmented tf for now, can experiment later
     def tf(self, doc_id: str, term: str) -> float:
+        """Return the term frequency for a word in a given document
+
+        Return the term frequency for a word in a given document
+
+        Arguments:
+          doc_id: The document ID of the document to search
+          term: The term to lookup
+
+        Returns:
+          The term frequency of the term in the given document
+        """
         return self.docs[doc_id].tf(term)
 
     def tf_idf(self, doc_id: str, term: str) -> float:
+        """Get the TF-IDF for a term in a given document
+
+        Arguments:
+          doc_id: The document ID of the document to search
+          term: The term to lookup
+
+        Returns:
+          The TF-IDF for the given document and term
+        """
         return self.tf(doc_id, term) * float(self.idf(term))
 
     def vocabulary(self) -> FreqDist:
+        """Return the vocabulary of this Corpus
+
+        Returns all the terms in this document and their frequency.
+
+        Returns:
+          The vocabulary of this Corpus as a NLTK FreqDist object
+        """
         if self._vocabulary is None:
             self._vocabulary = FreqDist()
             for doc in self.docs.values():
@@ -264,12 +385,30 @@ class Corpus:
             return sorted_v
 
     def top_terms(self, n: int = 5) -> List[List[Tuple[str, float]]]:
+        """Get all the top terms for all the documents
+
+        Get a list of all the top terms in the Corpus for all documents.
+        The terms are not combined.
+        A list of lists is returned for every document and every term.
+
+        Arguments:
+          n: The limit on the top-n terms to return
+
+        Returns:
+          A list of lists for every document and every term in each
+          document.
+        """
         r: List[List[Tuple[str, float]]] = []
         for document in self.docs.values():
             r.append(self.ranked_terms(document.doc_id, n))
         return r
 
     def to_scikit_learn_dataset(self) -> Bunch:
+        """Return a scikit-learn dataset for this Corpus
+
+        Returns:
+          A Bunch representation of the Corpus
+        """
         if not sklearn_installed:
             raise ScikitLearnNotInstalledException("scikit-learn not installed")
         dataset: Dict[str, List[str]] = {}
@@ -297,5 +436,12 @@ class Corpus:
 
     # TODO Add tests for this
     def process_pipeline(self, pipeline: "PipelineModule") -> None:
+        """Apply a pipeline module to this corpus
+
+        Process this collection of documents with a PipelineModule
+
+        Arguments:
+          pipeline: The PipelineModule to run
+        """
         for doc in self.docs.values():
             pipeline.process([doc])
